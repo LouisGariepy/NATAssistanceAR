@@ -10,21 +10,7 @@
 
 import socket
 import sys
-
-"""###############################################################"""
-## Convert a IP adress encoded in byte array of 4 elements to string.
-def ipv4_decode(byte_array):
-    
-    assert len(byte_array) == 4, "byte array length must be 4, got {}".format(len(byte_array))
-    
-    ip = []
-    for i, value in enumerate(byte_array):
-        if type(value) == int:
-            ip.append(str(value))
-        else:
-            raise ValueError("element {} may not be byte".format(i))
-    
-    return ".".join(ip)
+from Utils import ipv4_decode
     
 """
 ###############################################################
