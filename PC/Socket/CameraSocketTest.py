@@ -12,15 +12,17 @@
 
 
 from CameraSocket import CameraSocket
-
+import socket
 import sys
 import cv2
 
 
 # # Define host/port
 
-# In[ ]:
-
+# In[ ]:   
+hostname = socket.gethostname()   
+IPAddr = socket.gethostbyname(hostname)      
+print("Your Computer IP Address is:" + IPAddr)
 
 _host = "192.168.137.1"
 _port = 9999
@@ -31,8 +33,8 @@ _port = 9999
 # In[ ]:
 
 
-socket = CameraSocket().Bind(_host, _port)
-connected = socket.WaitConnection()
+cameraSocket = CameraSocket().Bind(_host, _port)
+connected = cameraSocket.WaitConnection()
 
 
 # Exit if connection failed
@@ -43,31 +45,22 @@ connected = socket.WaitConnection()
 if not connected:
     sys.exit(0)
 
-print("Connected to {}".format(socket.client))
+print("Connected to {}".format(cameraSocket.client))
 
 
 # # Run
 
 # In[ ]:
 
-
 while True:
 
-    frame = socket.GetFrame()
+    frame = cameraSocket.getFrame()
 
     # display
     cv2.imshow("frame", frame)
     if cv2.waitKey(10) == ord('q'): break
 
-socket.Exit()
-socket.close()
+cameraSocket.Exit()
+cameraSocket.close()
 
 cv2.destroyAllWindows()
-
-
-# In[ ]:
-
-
-socket.Exit()
-socket.close()
-
