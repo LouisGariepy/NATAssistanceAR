@@ -51,7 +51,7 @@ while True:
     # frame
     frame = camera.getFrame()
     
-    if frame.shape == (settings.REMOTECAM_WIDTH, settings.REMOTECAM_LENGTH, settings.REMOTECAM_NBSOCKETS):
+    if frame.shape == (settings.REMOTECAM_WIDTH, settings.REMOTECAM_LENGTH, settings.REMOTECAM_DIM):
         
         # detection
         detected = detector.Detect(frame)

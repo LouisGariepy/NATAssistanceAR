@@ -1,5 +1,9 @@
+import os
+
 #Paths
-MODEL_DIRECTORY = "C:\\Users\\ThibaultL\\ProjetAOO\\NATAssistanceAR\\ModelsForNAT\\model_3"
+filedir = os.path.dirname(__file__) #path to Settings.py
+projectdir = os.path.join(filedir, os.pardir, os.pardir) #path to NATAssistanceAR/
+MODEL_DIRECTORY = os.path.join(projectdir,'ModelsForNAT','model_3')
 GRAPH = MODEL_DIRECTORY + "/frozen_inference_graph.pb"
 LABELS = MODEL_DIRECTORY + "/labelmap.pbtxt"
 
@@ -22,3 +26,4 @@ REMOTECAM_PORT = 10000
 REMOTECAM_NBSOCKETS = 3
 REMOTECAM_LENGTH = 1280
 REMOTECAM_WIDTH = 720
+REMOTECAM_DIM = 3
