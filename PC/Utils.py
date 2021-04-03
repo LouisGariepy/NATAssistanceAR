@@ -2,7 +2,6 @@
 
 import glm
 
-print("test")
 
 ## Convert a IP adress encoded in byte array of 4 elements to string.
 def ipv4_decode(byte_array):
@@ -18,11 +17,7 @@ def ipv4_decode(byte_array):
     return ".".join(ip)
 
 
-
-
-
 ####### FOR SCENARII
-
 ## Return the length between two points in 3D space
 # @param pos1 and pos2 are glm.vec3 (x, y, z)
 def length2D(pos1, pos2):
