@@ -7,6 +7,7 @@
 
 
 import cv2
+from Utils import length2D
 
 
 try:
@@ -23,10 +24,10 @@ class PenNearNotebook2D(BaseScenario2D):
 
     """######################################################################"""
     def Action(self):
-        
+
         if ("Pen" in self.obj and "Notebook" in self.obj):
-            
-            if self.Length("Pen", "Notebook") < 0.2:
+
+            if length2D(self.obj["Pen"], self.obj["Notebook"]) < 0.2:
 
                 cv2.putText(self.frame,'Interaction', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
 

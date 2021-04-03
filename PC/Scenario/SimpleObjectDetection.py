@@ -20,26 +20,25 @@ try:
 except:
     # when imported from outside
     from Scenario.Base import *
-    
+
 
 import numpy as np
 import glm
-    
 
-    
+
+
 """####################################################################"""
 class SimpleObjectDetection(BaseScenario):
-        
-    
+
     """################################################################"""
     def Action(self):
-        
+
         for obj, pos in self.obj.items():
-            
+
             # create label for new object
             if obj in self.first_detection:
                 self.socket.Draw("new", pos.x, pos.y, pos.z, obj)
-            
+
             # update the object position
             else:
                 self.socket.Draw("update", pos.x, pos.y, pos.z, obj)
