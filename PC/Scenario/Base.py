@@ -9,20 +9,8 @@
 
 # -*- coding: utf-8 -*-
 
-
-import numpy as np
 import glm
-
-
-"""################################################################"""
-## Return the length between two points in 3D space
-# @param pos1 and pos2 are glm.vec3 (x, y, z)
-def length(pos1, pos2):
-    
-    v1 = glm.vec3(pos1)
-    v2 = glm.vec3(pos2)
-    
-    return glm.length(v2-v1)
+from Utils import length3D
 
 
 """####################################################################"""
@@ -46,10 +34,11 @@ class BaseScenario:
     ## Method to call in the mainloop to execute scenario.
     # @param detection dictionnary provided by the frame detection that include 3D position
     # @param socket the annotation socket to use for sending display command
-    def Update(self, detection, socket):
+    def Update(self, detection, socket, frame=None):
         
-        # set socket as attribute in order to let it accessible in child class
+        # set these as attribute in order to let it accessible in child class
         self.socket = socket
+        self.frame = frame
         
         # list of object detected for the first time
         self.first_detection = []
@@ -69,7 +58,7 @@ class BaseScenario:
                 self.first_detection.append(obj)
                 
             # for known objects, update the position if it moves more than 7cm
-            elif length((x,y,z), self.obj[obj]) > self.sensibility:
+            elif length3D((x,y,z), self.obj[obj]) > self.sensibility:
                 self.obj[obj] = glm.vec3(detection["positions"][n])
                 
         # method where decision are made
@@ -87,5 +76,5 @@ class BaseScenario:
     ## Return the length between position of 2 objects
     def Length(self, key1, key2):
 
-        return length(self.obj[key1], self.obj[key2])
+        return length3D(self.obj[key1], self.obj[key2])
     

@@ -11,6 +11,7 @@
 
 import os
 import sys
+import pathlib
 
 
 """###############################################################################################"""
@@ -18,7 +19,7 @@ import sys
 # must be completed before using tensorflow extra libraries
 def tensorflow_path():
     
-    return "WRITE THE PATH OF TENSORFLOW ON THE COMPUTER HERE"
+    return os.path.join(pathlib.Path(__file__).parent,'../../models/')
 
 
 """###############################################################################################"""
@@ -36,9 +37,6 @@ def object_detection_path():
 def import_object_detection():
     
     path = tensorflow_path()
-    default_path = "WRITE THE PATH OF TENSORFLOW ON THE COMPUTER HERE"
-    
-    assert path != default_path, "tensorflow path is not set in tensorflow_path() function from Tensorflow.lib"
     
     # path required for using object detection api
     paths = [
@@ -79,7 +77,7 @@ def load_model(path):
         with tf.io.gfile.GFile(path, 'rb') as fid:
             serialized_graph = fid.read()
             od_graph_def.ParseFromString(serialized_graph)
-            tf.import_graph_def(od_graph_def, name='')
+            tf.compat.v1.import_graph_def(od_graph_def, name='')
 
         # the session to use
         sess = tf.compat.v1.Session(graph=detection_graph)
