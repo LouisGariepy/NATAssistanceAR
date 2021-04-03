@@ -5,9 +5,7 @@
 
 # -*- coding: utf-8 -*-
 
-
 import cv2
-
 
 try:
     # when imported from here

@@ -9,8 +9,6 @@
 
 # -*- coding: utf-8 -*-
 
-
-import numpy as np
 import glm
 from Utils import length3D
 

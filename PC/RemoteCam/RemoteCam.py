@@ -7,18 +7,11 @@
 
 import cv2
 import numpy as np
-import base64
 import socket
-
+from Utils import decodeJpeg
 
 ###################################################################
-def decodeJpeg(js_data):
-    
-    base64_sequence = js_data[23:]
-    jpg_sequence = base64.b64decode(base64_sequence)
-    str_sequence = np.frombuffer(jpg_sequence, np.uint8)
-    
-    return cv2.imdecode(str_sequence, 1)
+
 
 
 ###################################################################
