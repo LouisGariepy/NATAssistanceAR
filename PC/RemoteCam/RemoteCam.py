@@ -10,6 +10,11 @@ import numpy as np
 import base64
 import socket
 
+# # Global variables
+import sys
+import os
+sys.path.append(os.pardir)
+import GlobalVariables.Settings as settings
 
 ###################################################################
 def decodeJpeg(js_data):
@@ -36,10 +41,10 @@ class RemoteCam:
             sock.settimeout(timeout)
             self.socket_list.append(sock)
         
-        self.novideo = np.zeros((480,640))
+        self.novideo = np.zeros((settings.DISPLAY_WIDTH,settings.DISPLAY_LENGTH))
         cv2.putText(self.novideo,'No video', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
         
-        self.decode = np.zeros((480,640))
+        self.decode = np.zeros((settings.DISPLAY_WIDTH,settings.DISPLAY_LENGTH))
         cv2.putText(self.decode,'Decode error', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
 
 
@@ -50,9 +55,9 @@ class RemoteCam:
             
             data = b""
             for sock in self.socket_list:
-                d, websocketserver_adress = sock.recvfrom(65000)
+                d, websocketserver_adress = sock.recvfrom(settings.SOCKET_BUFSIZE)
                 data += d
-                if len(d) < 65000: break
+                if len(d) < settings.SOCKET_BUFSIZE: break
                 
             try:
                 return decodeJpeg(data.decode())
@@ -83,7 +88,7 @@ if __name__ == "__main__":
     
         cam = RemoteCam(int_port_start, int_port_range)
 
-        while cv2.waitKey(1) != ord('q'):
+        while cv2.waitKey(1) != ord(settings.EXIT_KEY):
 
             frame = cam.getFrame()
             cv2.imshow("", frame)
