@@ -9,7 +9,14 @@
 # coding: utf-8
 
 import socket
+
+# # Global variables
 import sys
+import os
+filedir = os.path.dirname(__file__) #path to this file
+pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
+sys.path.insert(1, pcdir)
+import GlobalVariables.Settings as settings
 
 """###############################################################"""
 ## Convert a IP adress encoded in byte array of 4 elements to string.
@@ -85,7 +92,7 @@ class UdpConnection(socket.socket):
         
         try:
             self.settimeout(0.01)
-            self.recv(65000)
+            self.recv(settings.SOCKET_BUFSIZE)
             
         except socket.timeout:
             pass

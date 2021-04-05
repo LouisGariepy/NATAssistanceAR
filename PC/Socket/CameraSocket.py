@@ -20,6 +20,13 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 
+# # Global variables
+import sys
+import os
+filedir = os.path.dirname(__file__) #path to this file
+pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
+sys.path.insert(1, pcdir)
+import GlobalVariables.Settings as settings
 
 """
 ###############################################################
@@ -94,7 +101,7 @@ class UdpDataSocket(UdpConnection):
         for n in range(self.header["packet"]):
             
             self.sendto(b"\xfe", self.client) # send message for next packet
-            received, packet = self.WaitMsg(65000, 1) # wait the packet
+            received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1) # wait the packet
             
             if not received: return False, self.data # in case of timeout or error
             else: data += packet # concat the packet to data
@@ -142,10 +149,10 @@ class CameraSocket(UdpDataSocket):
             # in case of error
             if frame is None:
                 self.ClearReception()
-                frame = np.zeros((720,1280,3)) # empty array
+                frame = np.zeros((settings.DISPLAY_WIDTH,settings.DISPLAY_LENGTH,settings.DISPLAY_SIZE)) # empty array
         except:
             self.ClearReception()
-            frame = np.zeros((720,1280,3))
+            frame = np.zeros((settings.DISPLAY_WIDTH,settings.DISPLAY_LENGTH,settings.DISPLAY_SIZE))
 
         return frame
     
