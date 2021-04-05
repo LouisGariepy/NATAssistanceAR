@@ -11,12 +11,6 @@
 # In[ ]:
 
 
-MODEL_DIRECTORY = "MODEL_DIRECTORY"
-
-GRAPH = MODEL_DIRECTORY + "/frozen_inference_graph.pb"
-LABELS = MODEL_DIRECTORY + "/labelmap.pbtxt"
-NUM_CLASSES = 1000
-
 
 # # Import module
 
@@ -26,14 +20,21 @@ NUM_CLASSES = 1000
 from ObjectDetection import *
 from ObjectDetector import ObjectDetector
 
+# # Global variables
+import sys
+import os
+filedir = os.path.dirname(__file__) #path to this file
+pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
+sys.path.insert(1, pcdir)
+import GlobalVariables.Settings as settings
 
 # # Load model
 
 # In[ ]:
 
 
-category_index = load_categories(LABELS, NUM_CLASSES)
-sess, inputs, outputs = load_model(GRAPH)
+category_index = load_categories(settings.LABELS, settings.NUM_CLASSES)
+sess, inputs, outputs = load_model(settings.GRAPH)
 
 
 # # Set frame detector
@@ -42,7 +43,7 @@ sess, inputs, outputs = load_model(GRAPH)
 
 
 detector = ObjectDetector(sess, inputs, outputs, category_index)
-detector.SetThreshold(60)
+detector.SetThreshold(settings.DETECTOR_THRESHOLD)
 detector.draw = True
 
 
@@ -54,7 +55,7 @@ detector.draw = True
 import cv2
 import numpy as np
 
-frame = cv2.resize(cv2.imread("im.jpg"), (1280, 720))
+frame = cv2.resize(cv2.imread("im.jpg"), (settings.DISPLAY_LENGTH, settings.DISPLAY_WIDTH))
 
 detected = detector.Detect(frame)
 
@@ -74,17 +75,17 @@ import time
 from RemoteCam import RemoteCam
 
 
-video = RemoteCam(10000, 3)
+video = RemoteCam(settings.REMOTECAM_PORT, settings.REMOTECAM_NBSOCKETS)
 
 while(True):
 
     frame = video.getFrame()
     
-    if frame.shape == (720, 1280, 3):
+    if frame.shape == (settings.DISPLAY_WIDTH, settings.DISPLAY_LENGTH, settings.DISPLAY_SIZE):
         detected = detector.Detect(frame)
         
     cv2.imshow('Object detector', frame)
-    if cv2.waitKey(1) == ord('q'): break
+    if cv2.waitKey(1) == ord(settings.EXIT_KEY): break
 
         
 video.close()
