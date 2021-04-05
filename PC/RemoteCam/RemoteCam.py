@@ -13,7 +13,9 @@ import socket
 # # Global variables
 import sys
 import os
-sys.path.append(os.pardir)
+filedir = os.path.dirname(__file__) #path to Settings.py
+pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
+sys.path.insert(1, pcdir)
 import GlobalVariables.Settings as settings
 
 ###################################################################
