@@ -7,25 +7,11 @@
 
 import cv2
 import numpy as np
-import base64
 import socket
-
-# # Global variables
-import sys
-import os
-filedir = os.path.dirname(__file__) #path to this file
-pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
-sys.path.insert(1, pcdir)
-import GlobalVariables.Settings as settings
+from Utils import decodeJpeg
 
 ###################################################################
-def decodeJpeg(js_data):
-    
-    base64_sequence = js_data[23:]
-    jpg_sequence = base64.b64decode(base64_sequence)
-    str_sequence = np.frombuffer(jpg_sequence, np.uint8)
-    
-    return cv2.imdecode(str_sequence, 1)
+
 
 
 ###################################################################
@@ -43,10 +29,10 @@ class RemoteCam:
             sock.settimeout(timeout)
             self.socket_list.append(sock)
         
-        self.novideo = np.zeros((settings.DISPLAY_WIDTH,settings.DISPLAY_LENGTH))
+        self.novideo = np.zeros((480,640))
         cv2.putText(self.novideo,'No video', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
         
-        self.decode = np.zeros((settings.DISPLAY_WIDTH,settings.DISPLAY_LENGTH))
+        self.decode = np.zeros((480,640))
         cv2.putText(self.decode,'Decode error', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
 
 
@@ -57,9 +43,9 @@ class RemoteCam:
             
             data = b""
             for sock in self.socket_list:
-                d, websocketserver_adress = sock.recvfrom(settings.SOCKET_BUFSIZE)
+                d, websocketserver_adress = sock.recvfrom(65000)
                 data += d
-                if len(d) < settings.SOCKET_BUFSIZE: break
+                if len(d) < 65000: break
                 
             try:
                 return decodeJpeg(data.decode())
@@ -90,7 +76,7 @@ if __name__ == "__main__":
     
         cam = RemoteCam(int_port_start, int_port_range)
 
-        while cv2.waitKey(1) != ord(settings.EXIT_KEY):
+        while cv2.waitKey(1) != ord('q'):
 
             frame = cam.getFrame()
             cv2.imshow("", frame)

@@ -9,21 +9,8 @@
 
 # -*- coding: utf-8 -*-
 
-
-import numpy as np
 import glm
-
-
-"""################################################################"""
-## Return the length between two points in 3D space
-# @param pos1 and pos2 are glm.vec3 (x, y, z)
-def length(pos1, pos2):
-    
-    v1 = glm.vec2(pos1)
-    v2 = glm.vec2(pos2)
-    
-    return glm.length(v2-v1)
-
+from Utils import length2D
 
 """####################################################################"""
 ## Base class for managing detected objects and configure application actions. 
@@ -69,7 +56,7 @@ class BaseScenario2D:
                 self.first_detection.append(obj)
                 
             # for known objects, update the position if it moves more than 7cm
-            elif length((x,y), self.obj[obj]) > self.sensibility:
+            elif length2D((x,y), self.obj[obj]) > self.sensibility:
                 self.obj[obj] = glm.vec2(detection["centers"][n])
                 
         # method where decision are made
@@ -87,5 +74,5 @@ class BaseScenario2D:
     ## Return the length between position of 2 objects
     def Length(self, key1, key2):
 
-        return length(self.obj[key1], self.obj[key2])
+        return length2D(self.obj[key1], self.obj[key2])
     
