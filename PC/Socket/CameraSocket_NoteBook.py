@@ -13,17 +13,22 @@
 
 from CameraSocket import CameraSocket
 
-import sys
 import cv2
 
-
+# # Global variables
+import sys
+import os
+filedir = os.path.dirname(__file__) #path to this file
+pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
+sys.path.insert(1, pcdir)
+import GlobalVariables.Settings as settings
 # # Define host/port
 
 # In[ ]:
 
 
-_host = "192.168.137.1"
-_port = 9999
+_host = settings.HOST
+_port = settings.CAMERA_PORT
 
 
 # # Define socket and await connection
@@ -57,7 +62,7 @@ while True:
 
     # display
     cv2.imshow("frame", frame)
-    if cv2.waitKey(10) == ord('q'): break
+    if cv2.waitKey(10) == ord(settings.EXIT_KEY): break
 
 socket.Exit()
 socket.close()

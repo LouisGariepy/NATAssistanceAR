@@ -25,33 +25,9 @@ import cv2
 import sys
 import numpy as np
 
-
 # # Global variables
-# ## Model files and classes
+import GlobalVariables.Settings as settings
 
-# In[ ]:
-
-
-MODEL_DIRECTORY = "C:\\PhD\\ModelsForNAT\\model_3"
-
-GRAPH = MODEL_DIRECTORY + "/frozen_inference_graph.pb"
-LABELS = MODEL_DIRECTORY + "/labelmap.pbtxt"
-NUM_CLASSES = 7
-
-
-# ## Host and port
-
-# In[ ]:
-
-
-HOST = "10.44.160.22"
-
-CAMERA_PORT = 9999
-COLLISION_PORT = 9998
-ANNOTATION_PORT = 9997
-
-
-# ## Scenario
 
 # In[ ]:
 
@@ -68,8 +44,8 @@ scenario = SimpleNATRelease()
 # In[ ]:
 
 
-category_index = load_categories(LABELS, NUM_CLASSES)
-sess, inputs, outputs = load_model(GRAPH)
+category_index = load_categories(settings.LABELS, settings.NUM_CLASSES)
+sess, inputs, outputs = load_model(settings.GRAPH)
 
 
 # ### Set frame detector
@@ -78,7 +54,7 @@ sess, inputs, outputs = load_model(GRAPH)
 
 
 detector = ObjectDetector(sess, inputs, outputs, category_index)
-detector.SetThreshold(60)
+detector.SetThreshold(settings.DETECTOR_THRESHOLD)
 detector.draw = True
 
 
@@ -91,10 +67,10 @@ detector.draw = True
 # In[ ]:
 
 
-cameraSocket = CameraSocket().Bind(HOST, CAMERA_PORT)
+cameraSocket = CameraSocket().Bind(settings.HOST, settings.CAMERA_PORT)
 connected = cameraSocket.WaitConnection()    
 
-print(HOST + " " + str(CAMERA_PORT))
+print(settings.HOST + " " + str(settings.CAMERA_PORT))
       
 if not connected:
     cameraSocket.close()
@@ -110,8 +86,8 @@ else:
 # In[ ]:
 
 
-collisionSocket = RayCollisionSocket().Bind(HOST, COLLISION_PORT)
-print(HOST + " " + str(COLLISION_PORT))
+collisionSocket = RayCollisionSocket().Bind(settings.HOST, settings.COLLISION_PORT)
+print(settings.HOST + " " + str(settings.COLLISION_PORT))
 connected = collisionSocket.WaitConnection()
 if not connected:
     cameraSocket.close()
@@ -127,8 +103,8 @@ else:
 # In[ ]:
 
 
-annotationSocket = AnnotationSocket().Bind(HOST, ANNOTATION_PORT)
-print(HOST + " " + str(ANNOTATION_PORT))
+annotationSocket = AnnotationSocket().Bind(settings.HOST, settings.ANNOTATION_PORT)
+print(settings.HOST + " " + str(settings.ANNOTATION_PORT))
 connected = annotationSocket.WaitConnection()
 if not connected:
     cameraSocket.close()
@@ -161,7 +137,7 @@ while True:
     
     # display
     cv2.imshow("frame", frame)
-    if cv2.waitKey(1) == ord('q'): break
+    if cv2.waitKey(1) == ord(settings.EXIT_KEY): break
 
 
 cameraSocket.Exit()

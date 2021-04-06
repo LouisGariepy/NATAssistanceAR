@@ -13,7 +13,13 @@
 
 from AnnotationSocket import AnnotationSocket
 
+# # Global variables
 import sys
+import os
+filedir = os.path.dirname(__file__) #path to this file
+pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
+sys.path.insert(1, pcdir)
+import GlobalVariables.Settings as settings
 
 
 # # Define host/port
@@ -21,8 +27,8 @@ import sys
 # In[ ]:
 
 
-_host = "192.168.137.1"
-_port = 9999
+_host = settings.HOST
+_port = settings.CAMERA_PORT
 
 
 # # Define socket
