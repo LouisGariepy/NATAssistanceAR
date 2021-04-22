@@ -86,7 +86,7 @@ class CameraSocket(UdpConnection):
         for _ in range(self.header["packet"]):
 
             self.sendto(b"\xfe", self.client)  # send message for next packet
-            received, packet = self.WaitMsg(65000, 1)  # wait the packet
+            received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1) # wait the packet
 
             if not received:
                 return False, self.data  # in case of timeout or error
@@ -122,6 +122,7 @@ class CameraSocket(UdpConnection):
 
         except frame is None:
             self.ClearReception()
-            frame = np.zeros((720, 1280, 3))
+            frame = np.zeros((settings.DISPLAY_WIDTH,settings.DISPLAY_LENGTH,settings.DISPLAY_SIZE))
+
 
         return frame
