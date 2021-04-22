@@ -1,10 +1,11 @@
 
-
 class Strategy2D():
-    def __init__() -> None:
+
+    def __init__(self) -> None:
+        pass
 
     def Update(self, detection, frame):
         pass
 
-    def Action(self)
+    def Action(self):
         pass

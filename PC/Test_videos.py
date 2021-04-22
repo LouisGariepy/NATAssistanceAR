@@ -1,11 +1,15 @@
 from Tensorflow.ObjectDetection import *
 from Tensorflow.ObjectDetector import ObjectDetector
-from Scenario.Base2D import BaseScenario2D
+from Scenario.Strategy import *
+
+
 import cv2
 import sys
 import numpy as np
 import unittest
-import ContexteFactory2D
+
+#configuration pour les scenarii
+from Scenario.AbstractFactory_Singleton import ContexteFactory2D as conf
 
 Bottle = "Bottle"
 Pen = "Pen"
@@ -20,7 +24,7 @@ GRAPH = MODEL_DIRECTORY + "/frozen_inference_graph.pb"
 LABELS = MODEL_DIRECTORY + "/labelmap.pbtxt"
 NUM_CLASSES = 7
 
-factory = ContexteFactory2D()
+factory = conf.ContexteFactory2D()
 scenario = factory.build_strategy().strategy2D
 
 category_index = load_categories(LABELS, NUM_CLASSES)

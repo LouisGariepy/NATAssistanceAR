@@ -35,9 +35,9 @@ class SingletonMeta(type):
                 cls._instances[cls] = instance
         return cls._instances[cls]
 
-class Abs_Fatcory(metaclass=SingletonMeta):
-    def __init__(self, config) -> None :
-        self.config = config
+class Abs_Factory(metaclass=SingletonMeta):
+    def __init__(self) -> None :
+        pass
 
     def build_strategy(self):
         pass

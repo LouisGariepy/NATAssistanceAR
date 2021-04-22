@@ -11,14 +11,14 @@
 
 import glm
 from Utils import length3D
-
+from . import Strategy as strat
 
 """####################################################################"""
 ## Base class for managing detected objects and configure application actions.
 # obj attribute is a dictionnary that associate an object name as key to its position as glm.vec3.
 # first_detection and excluded_detection are respectively used to indicate in child class object that an object is detected for the first time and that its position must not be updated.
 # sensibility is the length (meter in real world) for wich object position is not updated if its last move length is less.
-class BaseScenario(Strategy):
+class BaseScenario(strat.Strategy):
 
 
     """################################################################"""

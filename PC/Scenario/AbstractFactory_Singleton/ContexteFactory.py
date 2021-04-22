@@ -1,7 +1,8 @@
+from . import Abs_Factory
+from . import Contexte as cont
 
-
-class ContexteFactory(Abs_Fatcory):
-    def __init__(self, config) -> None :
-
+class ContexteFactory(Abs_Factory):
+    def __init__(self) -> None :
+        pass
     def build_strategy(self):
-        return Contexte()
+        return cont.Contexte()
