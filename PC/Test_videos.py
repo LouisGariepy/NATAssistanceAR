@@ -2,6 +2,7 @@ from Tensorflow.ObjectDetection import *
 from Tensorflow.ObjectDetector import ObjectDetector
 from Scenario.Base2D import BaseScenario2D
 import cv2
+import tensorflow as tf
 import sys
 import numpy as np
 import unittest

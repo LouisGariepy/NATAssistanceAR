@@ -48,7 +48,7 @@ socket.Bind(HOST, PORT)
 # In[ ]:
 
 
-socket.EchoEnabled()
+socket.EnableEcho()
 
 
 # # Socket connection

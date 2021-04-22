@@ -17,14 +17,7 @@ except:
     
 
 import numpy as np
-
-# # Import
-# # Global variables
-import sys
-import os
-filedir = os.path.dirname(__file__) #path to this file
-pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
-sys.path.insert(1, pcdir)
+from UDPConnectionSingleton import UDPConnectionSingleton
 import GlobalVariables.Settings as settings
 
 """
@@ -38,8 +31,8 @@ import GlobalVariables.Settings as settings
 ####################################################################
 """
 ## Inherited from UdpConnection. Socket for receiving 3D coordinates coresponding to 2D coordinates sended previously
-class RayCollisionSocket(UdpConnection):
-    
+class RayCollisionSocket():
+    UDPConnectionSingleton = UDPConnectionSingleton.getUDPConnectionInstance()
     
     """####################################################################"""
     ## Request to the client the associated coordinates in space of the 2D coordinates.
@@ -47,8 +40,8 @@ class RayCollisionSocket(UdpConnection):
     # return a list of coordinates type (x, y, z) with values exprimed in meters or an empty list if no reply is received.
     def AskPositions(self, coords):
         
-        if not self.IsConnected():
-            self.echo("Request not possible: client not connected")
+        if not self.UDPConnectionSingleton.IsConnected():
+            self.UDPConnectionSingleton.echo("Request not possible: client not connected")
             
         # if coords list is empty
         elif len(coords) == 0:
@@ -58,10 +51,10 @@ class RayCollisionSocket(UdpConnection):
             message = self.ToBytes(coords) # convert list to message
             
             # send the 2D coordinates
-            self.sendto(message, self.client)
-            self.echo("Send request for positions to client")
+            self.UDPConnectionSingleton.sendto(message, self.UDPConnectionSingleton.client)
+            self.UDPConnectionSingleton.echo("Send request for positions to client")
             
-            received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1) # await coordinates
+            received, packet = self.UDPConnectionSingleton.WaitMsg(settings.SOCKET_BUFSIZE, 1) # await coordinates
             # convert packet (string) to list if received
             if received > 0:
                 return self.ToArray(packet)
