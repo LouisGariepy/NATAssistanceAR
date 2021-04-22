@@ -1,4 +1,7 @@
 import os
+import sys
+sys.path.append(os.path.dirname(__file__) + "/../Socket")
+from HostIPv4 import HostIPv4
 
 #Paths
 filedir = os.path.dirname(__file__) #path to Settings.py
@@ -9,7 +12,9 @@ LABELS = MODEL_DIRECTORY + "/labelmap.pbtxt"
 
 NUM_CLASSES = 7
 
-HOST = "192.168.1.11"
+# Override this if connected
+# to multiple networks
+HOST = HostIPv4.address
 
 #Ports
 CAMERA_PORT = 9999
