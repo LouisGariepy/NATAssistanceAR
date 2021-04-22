@@ -41,8 +41,8 @@ import GlobalVariables.Settings as settings
 # Informations could be displayed in console, use EchoEnabled.
 class UdpConnection(socket.socket):
     
-    host = "127.0.0.1"
-    port = 9999
+    host = settings.HOST
+    port = settings.CAMERA_PORT
     client = None
     echo = lambda x, y: None
     
