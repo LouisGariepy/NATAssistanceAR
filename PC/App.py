@@ -21,6 +21,7 @@ from Tensorflow.ObjectDetector import ObjectDetector
 from Scenario.SimpleObjectDetection import SimpleObjectDetection
 from Scenario.SimpleNAT import *
 
+import ContexteFactory
 import cv2
 import sys
 import numpy as np
@@ -58,7 +59,9 @@ ANNOTATION_PORT = 9997
 
 # scenario = SimpleObjectDetection()
 # scenario = SimpleNATReleaseTimer()
-scenario = SimpleNATRelease()
+factory = ContexteFactory()
+factory.set_strategy2D(SimpleNATRelease())
+scenario = factory.build_strategy().strategy
 
 
 # # Object detection configuration
@@ -83,19 +86,19 @@ detector.draw = True
 
 
 # # Define sockets and await connection
-# 
+#
 # ### Camera
-# 
+#
 # Exit if connection failed
 
 # In[ ]:
 
 
 cameraSocket = CameraSocket().Bind(HOST, CAMERA_PORT)
-connected = cameraSocket.WaitConnection()    
+connected = cameraSocket.WaitConnection()
 
 print(HOST + " " + str(CAMERA_PORT))
-      
+
 if not connected:
     cameraSocket.close()
     sys.exit(0)
@@ -104,7 +107,7 @@ else:
 
 
 # ### Ray collision
-# 
+#
 # Exit if connection failed
 
 # In[ ]:
@@ -119,9 +122,9 @@ if not connected:
     sys.exit(0)
 else:
 	print("Collision socket connected")
-	
+
 # ### Annotation
-# 
+#
 # Exit if connection failed
 
 # In[ ]:
@@ -147,18 +150,18 @@ while True:
 
     # frame
     frame = cameraSocket.GetFrame()
-    
+
     # detection
     detected = detector.Detect(frame)
 
     # ray collision test
     positions = collisionSocket.AskPositions(detected["centers"])
-    
+
     # annotation
     if len(positions) > 0 and len(positions) == len(detected["centers"]):
         detected["positions"] = positions
         scenario.Update(detected, annotationSocket)
-    
+
     # display
     cv2.imshow("frame", frame)
     if cv2.waitKey(1) == ord('q'): break
