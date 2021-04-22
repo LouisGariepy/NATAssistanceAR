@@ -2,18 +2,18 @@
     Author: Anthony Melin
     Date: 2019 August 14
 """
-from UdpConnection import UdpConnection
-import numpy as np
-import cv2
-import matplotlib.pyplot as plt
 
 # # Global variables
 import sys
 import os
-filedir = os.path.dirname(__file__) #path to this file
-pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
+filedir = os.path.dirname(__file__)  # path to this file
+pcdir = os.path.join(filedir, os.pardir)  # path to NATAssistanceAR/PC
 sys.path.insert(1, pcdir)
+
 import GlobalVariables.Settings as settings
+from UdpConnection import UdpConnection
+import numpy as np
+import cv2
 
 """
 ###############################################################
@@ -28,7 +28,6 @@ import GlobalVariables.Settings as settings
 #                                                             #
 ###############################################################
 """
-
 
 class CameraSocket(UdpConnection):
     """
@@ -86,12 +85,12 @@ class CameraSocket(UdpConnection):
         for _ in range(self.header["packet"]):
 
             self.sendto(b"\xfe", self.client)  # send message for next packet
-            received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1) # wait the packet
+            received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
 
             if not received:
                 return False, self.data  # in case of timeout or error
-            else:
-                data += packet  # concat the packet to data
+            
+            data += packet  # concat the packet to data
 
         return True, data
 
@@ -101,7 +100,8 @@ class CameraSocket(UdpConnection):
         Extract the number of packet to receive from the header.
         """
 
-        packet = header[0]  # packet is the 1st byte received. It's implicitly converted to int
+        # packet is the 1st byte received. It's implicitly converted to int
+        packet = header[0]
         self.echo("packet: {}".format(packet))
 
         return {"packet": packet}
@@ -115,14 +115,15 @@ class CameraSocket(UdpConnection):
         frame = None
         self.askData()
 
-        # TODO: refactor try except not tested
         # try to decode frame
         try:
-            frame = cv2.imdecode(np.frombuffer(self.data, np.uint8), -1)  # decode the frame
+            frame = cv2.imdecode(np.frombuffer(
+                self.data, np.uint8), -1)  # decode the frame
 
-        except frame is None:
+        except:
             self.ClearReception()
-            frame = np.zeros((settings.DISPLAY_WIDTH,settings.DISPLAY_LENGTH,settings.DISPLAY_SIZE))
-
+            frame = np.zeros((settings.DISPLAY_WIDTH
+                            , settings.DISPLAY_LENGTH
+                            , settings.DISPLAY_SIZE))
 
         return frame

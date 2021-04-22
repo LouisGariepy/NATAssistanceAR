@@ -26,9 +26,6 @@ import GlobalVariables.Settings as settings
 # # Define host/port
 
 # In[ ]:   
-hostname = socket.gethostname()   
-IPAddr = socket.gethostbyname(hostname)      
-print("Your Computer IP Address is:" + IPAddr)
 
 _host = settings.HOST
 _port = settings.CAMERA_PORT
@@ -48,8 +45,7 @@ connected = cameraSocket.WaitConnection()
 # In[ ]:
 
 
-if not connected:
-    sys.exit(0)
+
 
 print("Connected to {}".format(cameraSocket.client))
 
