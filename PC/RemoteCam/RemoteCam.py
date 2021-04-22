@@ -10,6 +10,14 @@ import numpy as np
 import socket
 from Utils import decodeJpeg
 
+# # Global variables
+import sys
+import os
+filedir = os.path.dirname(__file__) #path to this file
+pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
+sys.path.insert(1, pcdir)
+import GlobalVariables.Settings as settings
+
 ###################################################################
 
 
@@ -43,9 +51,9 @@ class RemoteCam:
             
             data = b""
             for sock in self.socket_list:
-                d, websocketserver_adress = sock.recvfrom(65000)
+                d, websocketserver_adress = sock.recvfrom(settings.SOCKET_BUFSIZE)
                 data += d
-                if len(d) < 65000: break
+                if len(d) < settings.SOCKET_BUFSIZE: break
                 
             try:
                 return decodeJpeg(data.decode())
@@ -76,7 +84,7 @@ if __name__ == "__main__":
     
         cam = RemoteCam(int_port_start, int_port_range)
 
-        while cv2.waitKey(1) != ord('q'):
+        while cv2.waitKey(1) != ord(settings.EXIT_KEY):
 
             frame = cam.getFrame()
             cv2.imshow("", frame)

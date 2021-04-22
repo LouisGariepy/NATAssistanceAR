@@ -18,6 +18,15 @@ except:
 
 import numpy as np
 
+# # Import
+# # Global variables
+import sys
+import os
+filedir = os.path.dirname(__file__) #path to this file
+pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
+sys.path.insert(1, pcdir)
+import GlobalVariables.Settings as settings
+
 """
 ####################################################################
 #                      UdpRayCollisionSocket                       #
@@ -52,7 +61,7 @@ class RayCollisionSocket(UdpConnection):
             self.sendto(message, self.client)
             self.echo("Send request for positions to client")
             
-            received, packet = self.WaitMsg(65000, 1) # await coordinates
+            received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1) # await coordinates
             # convert packet (string) to list if received
             if received > 0:
                 return self.ToArray(packet)

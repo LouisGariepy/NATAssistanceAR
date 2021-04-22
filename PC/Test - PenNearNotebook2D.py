@@ -21,13 +21,7 @@ import numpy as np
 
 
 # # Global variables
-# ## Model files and classes
-
-MODEL_DIRECTORY = "MODEL_DIRECTORY"
-
-GRAPH = MODEL_DIRECTORY + "/frozen_inference_graph.pb"
-LABELS = MODEL_DIRECTORY + "/labelmap.pbtxt"
-NUM_CLASSES = 99
+import GlobalVariables.Settings as settings
 
 
 # ## Scenario
@@ -39,27 +33,27 @@ scenario = PenNearNotebook2D()
 
 # ### Load model
 
-category_index = load_categories(LABELS, NUM_CLASSES)
-sess, inputs, outputs = load_model(GRAPH)
+category_index = load_categories(settings.LABELS, settings.NUM_CLASSES)
+sess, inputs, outputs = load_model(settings.GRAPH)
 
 
 # ### Set frame detector
 
 detector = ObjectDetector(sess, inputs, outputs, category_index)
-detector.SetThreshold(60)
+detector.SetThreshold(settings.DETECTOR_THRESHOLD)
 detector.draw = True
 
 
 # # Loop
 
-camera = RemoteCam(10000, 3)
+camera = RemoteCam(settings.REMOTECAM_PORT, settings.REMOTECAM_NBSOCKETS)
 
 while True:
 
     # frame
     frame = camera.getFrame()
     
-    if frame.shape == (720, 1280, 3):
+    if frame.shape == (settings.REMOTECAM_WIDTH, settings.REMOTECAM_LENGTH, settings.REMOTECAM_DIM):
         
         # detection
         detected = detector.Detect(frame)
@@ -67,7 +61,7 @@ while True:
     
     # display
     cv2.imshow("frame", frame)
-    if cv2.waitKey(1) == ord('q'): break
+    if cv2.waitKey(1) == ord(settings.EXIT_KEY): break
 
 cv2.destroyAllWindows()
 camera.close()

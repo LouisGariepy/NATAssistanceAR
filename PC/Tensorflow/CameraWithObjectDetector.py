@@ -11,12 +11,6 @@
 # In[ ]:
 
 
-MODEL_DIRECTORY = "MODEL_DIRECTORY"
-
-GRAPH = MODEL_DIRECTORY + "/frozen_inference_graph.pb"
-LABELS = MODEL_DIRECTORY + "/labelmap.pbtxt"
-NUM_CLASSES = 99
-
 
 # # Import module
 
@@ -27,13 +21,21 @@ from ObjectDetection import *
 from ObjectDetector import ObjectDetector
 
 
+# # Global variables
+import sys
+import os
+filedir = os.path.dirname(__file__) #path to this file
+pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
+sys.path.insert(1, pcdir)
+import GlobalVariables.Settings as settings
+
 # # Load model
 
 # In[ ]:
 
 
-category_index = load_categories(LABELS, NUM_CLASSES)
-sess, inputs, outputs = load_model(GRAPH)
+category_index = load_categories(settings.LABELS, settings.NUM_CLASSES)
+sess, inputs, outputs = load_model(settings.GRAPH)
 
 
 # # Set frame detector
@@ -42,7 +44,7 @@ sess, inputs, outputs = load_model(GRAPH)
 
 
 detector = ObjectDetector(sess, inputs, outputs, category_index)
-detector.SetThreshold(60)
+detector.SetThreshold(settings.DETECTOR_THRESHOLD)
 detector.draw = True
 
 
@@ -64,7 +66,7 @@ while(True):
     detected = detector.Detect(frame)
 
     cv2.imshow('Object detector', frame)
-    if cv2.waitKey(1) == ord('q'): break
+    if cv2.waitKey(1) == ord(settings.EXIT_KEY): break
 
 video.release()
 cv2.destroyAllWindows()
