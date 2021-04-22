@@ -7,6 +7,9 @@ from pandas import np
 
 from UDPConnectionSingleton import UDPConnectionSingleton
 import GlobalVariables.Settings as settings
+from UdpConnection import UdpConnection
+import numpy as np
+import cv2
 
 """
 ###############################################################
@@ -79,14 +82,17 @@ class CameraSocket():
         # loop as many as packet to receive
         for _ in range(self.header["packet"]):
 
+            self.sendto(b"\xfe", self.client)  # send message for next packet
+            received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
             self.UDPConnectionSingleton.sendto(b"\xfe",
                                                self.UDPConnectionSingleton.client)  # send message for next packet
             received, packet = self.UDPConnectionSingleton.WaitMsg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
 
             if not received:
                 return False, self.data  # in case of timeout or error
+            
+            data += packet  # concat the packet to data
             else:
-                data += packet  # concat the packet to data
 
         return True, data
 
@@ -96,6 +102,9 @@ class CameraSocket():
         Extract the number of packet to receive from the header.
         """
 
+        # packet is the 1st byte received. It's implicitly converted to int
+        packet = header[0]
+        self.echo("packet: {}".format(packet))
         packet = header[0]  # packet is the 1st byte received. It's implicitly converted to int
         self.UDPConnectionSingleton.echo("packet: {}".format(packet))
 
@@ -110,11 +119,16 @@ class CameraSocket():
         frame = None
         self.askData()
 
-        # TODO: refactor try except not tested
         # try to decode frame
         try:
-            frame = cv2.imdecode(np.frombuffer(self.data, np.uint8), -1)  # decode the frame
+            frame = cv2.imdecode(np.frombuffer(
+                self.data, np.uint8), -1)  # decode the frame
 
+        except:
+            self.ClearReception()
+            frame = np.zeros((settings.DISPLAY_WIDTH
+                            , settings.DISPLAY_LENGTH
+                            , settings.DISPLAY_SIZE))
         except frame is None:
             self.UDPConnectionSingleton.ClearReception()
             frame = np.zeros((settings.DISPLAY_WIDTH, settings.DISPLAY_LENGTH, settings.DISPLAY_SIZE))
