@@ -5,6 +5,7 @@ import cv2
 import sys
 import numpy as np
 import unittest
+import ContexteFactory2D
 
 Bottle = "Bottle"
 Pen = "Pen"
@@ -19,7 +20,8 @@ GRAPH = MODEL_DIRECTORY + "/frozen_inference_graph.pb"
 LABELS = MODEL_DIRECTORY + "/labelmap.pbtxt"
 NUM_CLASSES = 7
 
-scenario = BaseScenario2D()
+factory = ContexteFactory2D()
+scenario = factory.build_strategy().strategy2D
 
 category_index = load_categories(LABELS, NUM_CLASSES)
 sess, inputs, outputs = load_model(GRAPH)
@@ -32,7 +34,7 @@ class TestObjectDetection(unittest.TestCase):
     # test bottle function
     def test_bottle(self):
         cap = cv2.VideoCapture(video.get("bottle"))
-        if (cap.isOpened()== False): 
+        if (cap.isOpened()== False):
             print("Error opening video  file")
 
         while(cap.isOpened()):
@@ -40,7 +42,7 @@ class TestObjectDetection(unittest.TestCase):
             ret, frame = cap.read()
             if ret == True:
                 #cv2.imshow('Frame', frame)
-       
+
                 if frame.shape == (720, 1280, 3):
                     # detection
                     detected = detector.Detect(frame)
@@ -48,21 +50,21 @@ class TestObjectDetection(unittest.TestCase):
                     self.assertEqual(detected.get('classes_names')[0], Bottle, message)
                     scenario.Update(detected, frame)
             cv2.imshow("frame", frame)
-       
+
             # Press Q on keyboard to  exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
-               
-        # When everything done, release 
+
+        # When everything done, release
         # the video capture object
         cap.release()
 
         # Closes all the frames
         cv2.destroyAllWindows()
-    
+
     def test_pen(self):
         cap = cv2.VideoCapture(video.get("pen"))
-        if (cap.isOpened()== False): 
+        if (cap.isOpened()== False):
             print("Error opening video  file")
 
         while(cap.isOpened()):
@@ -70,7 +72,7 @@ class TestObjectDetection(unittest.TestCase):
             ret, frame = cap.read()
             if ret == True:
                 #cv2.imshow('Frame', frame)
-       
+
                 if frame.shape == (720, 1280, 3):
                     # detection
                     detected = detector.Detect(frame)
@@ -78,21 +80,21 @@ class TestObjectDetection(unittest.TestCase):
                     self.assertEqual(detected.get('classes_names')[0], Pen, message)
                     scenario.Update(detected, frame)
             cv2.imshow("frame", frame)
-       
+
             # Press Q on keyboard to  exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
-               
-        # When everything done, release 
+
+        # When everything done, release
         # the video capture object
         cap.release()
 
         # Closes all the frames
         cv2.destroyAllWindows()
-    
+
     def test_notebook(self):
         cap = cv2.VideoCapture(video.get("notebook"))
-        if (cap.isOpened()== False): 
+        if (cap.isOpened()== False):
             print("Error opening video  file")
 
         while(cap.isOpened()):
@@ -100,7 +102,7 @@ class TestObjectDetection(unittest.TestCase):
             ret, frame = cap.read()
             if ret == True:
                 #cv2.imshow('Frame', frame)
-       
+
                 if frame.shape == (720, 1280, 3):
                     # detection
                     detected = detector.Detect(frame)
@@ -108,21 +110,21 @@ class TestObjectDetection(unittest.TestCase):
                     self.assertEqual(detected.get('classes_names')[0], Notebook, message)
                     scenario.Update(detected, frame)
             cv2.imshow("frame", frame)
-       
+
             # Press Q on keyboard to  exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
-               
-        # When everything done, release 
+
+        # When everything done, release
         # the video capture object
         cap.release()
 
         # Closes all the frames
         cv2.destroyAllWindows()
-    
+
     def test_all(self):
         cap = cv2.VideoCapture(video.get("all"))
-        if (cap.isOpened()== False): 
+        if (cap.isOpened()== False):
             print("Error opening video  file")
 
         while(cap.isOpened()):
@@ -130,7 +132,7 @@ class TestObjectDetection(unittest.TestCase):
             ret, frame = cap.read()
             if ret == True:
                 #cv2.imshow('Frame', frame)
-       
+
                 if frame.shape == (720, 1280, 3):
                     # detection
                     detected = detector.Detect(frame)
@@ -140,16 +142,16 @@ class TestObjectDetection(unittest.TestCase):
                     self.assertEqual(list_objects, All, message)
                     scenario.Update(detected, frame)
             cv2.imshow("frame", frame)
-       
+
             # Press Q on keyboard to  exit
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
-               
-        # When everything done, release 
+
+        # When everything done, release
         # the video capture object
         cap.release()
 
         # Closes all the frames
-        cv2.destroyAllWindows() 
+        cv2.destroyAllWindows()
 if __name__ == '__main__':
     unittest.main()
