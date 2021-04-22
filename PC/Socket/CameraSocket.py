@@ -63,8 +63,9 @@ class CameraSocket(UdpConnection):
         Wait for a reader that indicate information such as number of packet that the client will send
         Return the result of FormatHeader if received the header otherwise return false
         """
-
-        size, header = self.WaitMsg(32, 1, "header")  # wait the header
+        
+        # wait the header
+        size, header = self.WaitMsg(32, 1, "header")  
 
         # if received
         if size > 0:
@@ -83,14 +84,19 @@ class CameraSocket(UdpConnection):
 
         # loop as many as packet to receive
         for _ in range(self.header["packet"]):
-
-            self.sendto(b"\xfe", self.client)  # send message for next packet
-            received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
-
-            if not received:
-                return False, self.data  # in case of timeout or error
             
-            data += packet  # concat the packet to data
+            # send message for next packet
+            self.sendto(b"\xfe", self.client) 
+             
+            # wait the packet
+            received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1)  
+
+            # in case of timeout or error
+            if not received:
+                return False, self.data  
+            
+            # concat the packet to data
+            data += packet  
 
         return True, data
 
@@ -117,8 +123,9 @@ class CameraSocket(UdpConnection):
 
         # try to decode frame
         try:
+            # decode the frame
             frame = cv2.imdecode(np.frombuffer(
-                self.data, np.uint8), -1)  # decode the frame
+                self.data, np.uint8), -1)  
 
         except:
             self.ClearReception()
