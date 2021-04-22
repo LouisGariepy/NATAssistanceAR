@@ -50,7 +50,6 @@ def import_object_detection():
         if p not in sys.path:
             sys.path.append(p)
 
-
 """###############################################################################################"""
 ## load model categories from labelmap file
 # @param path string, path to the .pbtxt file

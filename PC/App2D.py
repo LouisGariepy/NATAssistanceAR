@@ -17,6 +17,7 @@ from Tensorflow.ObjectDetector import ObjectDetector
 
 from Scenario.Base2D import BaseScenario2D
 
+import ContexteFactory2D
 import cv2
 import sys
 import numpy as np
@@ -28,7 +29,8 @@ import GlobalVariables.Settings as settings
 
 
 # ## Scenario
-scenario = BaseScenario2D()
+factory = ContexteFactory2D()
+scenario = factory.build_strategy().strategy2D
 
 # # Object detection configuration
 
@@ -50,13 +52,13 @@ while True:
 
     # frame
     frame = camera.getFrame()
-    
+
     if frame.shape == (settings.REMOTECAM_WIDTH, settings.REMOTECAM_LENGTH, settings.REMOTECAM_DIM):
-        
+
         # detection
         detected = detector.Detect(frame)
         scenario.Update(detected, frame)
-    
+
     # display
     cv2.imshow("frame", frame)
     if cv2.waitKey(1) == ord(settings.EXIT_KEY): break
