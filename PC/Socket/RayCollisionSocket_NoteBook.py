@@ -7,7 +7,13 @@
 # -------------------------
 
 # # Import
-
+# # Global variables
+import sys
+import os
+filedir = os.path.dirname(__file__) #path to this file
+pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
+sys.path.insert(1, pcdir)
+import GlobalVariables.Settings as settings
 # In[ ]:
 
 
@@ -44,8 +50,8 @@ print("message converted :", socket.ToArray(vec3))
 # In[ ]:
 
 
-_host = "192.168.137.1"
-_port = 9999
+_host = settings.HOST
+_port = settings.CAMERA_PORT
 
 
 # ### Define coordinates to send
@@ -118,7 +124,7 @@ while True:
         cv2.putText(frame, text, (0,30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
         
     cv2.imshow("frame", frame)
-    if cv2.waitKey(1) == ord('q'): break
+    if cv2.waitKey(1) == ord(settings.EXIT_KEY): break
 
 
 socket.Exit()

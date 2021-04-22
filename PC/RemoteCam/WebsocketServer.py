@@ -11,7 +11,13 @@ import socket
 import websockets
 import asyncio
 
-
+# # Global variables
+import sys
+import os
+filedir = os.path.dirname(__file__) #path to this file
+pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
+sys.path.insert(1, pcdir)
+import GlobalVariables.Settings as settings
     
 ###############################################################################
 class WebsocketServer:
@@ -73,7 +79,7 @@ class WebsocketServer:
         await sock.send("send")
         frame = await sock.recv()
 
-        size = 65000
+        size = settings.SOCKET_BUFSIZE
         for n, start in enumerate(range(0, len(frame), size)):
             chunk = frame[start:start+size]
             self.udp.sendto(chunk.encode(), ("127.0.0.1", self.int_port+n))

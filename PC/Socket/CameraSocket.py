@@ -5,6 +5,15 @@
 from UdpConnection import UdpConnection
 import numpy as np
 import cv2
+import matplotlib.pyplot as plt
+
+# # Global variables
+import sys
+import os
+filedir = os.path.dirname(__file__) #path to this file
+pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
+sys.path.insert(1, pcdir)
+import GlobalVariables.Settings as settings
 
 """
 ###############################################################
