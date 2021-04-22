@@ -18,6 +18,6 @@ class HostIPv4(metaclass=Singleton):
         address = s.getsockname()[0]
 
 
-# Obtain the IPv4 addr
+# Obtenir l'addr IPv4
 if __name__ == '__main__':
     print(HostIPv4().address)
