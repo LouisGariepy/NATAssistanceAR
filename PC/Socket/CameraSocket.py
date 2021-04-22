@@ -3,13 +3,11 @@
     Date: 2019 August 14
 """
 import cv2
+import numpy as np
 from pandas import np
 
-from UDPConnectionSingleton import UDPConnectionSingleton
 import GlobalVariables.Settings as settings
-from UdpConnection import UdpConnection
-import numpy as np
-import cv2
+from UDPConnectionSingleton import UDPConnectionSingleton
 
 """
 ###############################################################
@@ -29,7 +27,6 @@ import cv2
 class CameraSocket():
     UDPConnectionSingleton = UDPConnectionSingleton.getUDPConnectionInstance()
     """
-    Inherited from UdpConnection.
     Udp server for asking data in byte format to connected client.
     Receive frames as data and make sure it's readable
     """
@@ -67,7 +64,7 @@ class CameraSocket():
         # if received
         if size > 0:
             self.UDPConnectionSingleton.echo("Received header")
-            return self.formatHeader(header)
+            return self.UDPConnectionSingleton.formatHeader(header)
 
         return False
 
@@ -82,8 +79,8 @@ class CameraSocket():
         # loop as many as packet to receive
         for _ in range(self.header["packet"]):
 
-            self.sendto(b"\xfe", self.client)  # send message for next packet
-            received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
+            self.UDPConnectionSingleton.sendto(b"\xfe", self.UDPConnectionSingleton.client)  # send message for next packet
+            received, packet = self.UDPConnectionSingleton.WaitMsg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
             self.UDPConnectionSingleton.sendto(b"\xfe",
                                                self.UDPConnectionSingleton.client)  # send message for next packet
             received, packet = self.UDPConnectionSingleton.WaitMsg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
@@ -92,7 +89,6 @@ class CameraSocket():
                 return False, self.data  # in case of timeout or error
             
             data += packet  # concat the packet to data
-            else:
 
         return True, data
 
@@ -129,8 +125,5 @@ class CameraSocket():
             frame = np.zeros((settings.DISPLAY_WIDTH
                             , settings.DISPLAY_LENGTH
                             , settings.DISPLAY_SIZE))
-        except frame is None:
-            self.UDPConnectionSingleton.ClearReception()
-            frame = np.zeros((settings.DISPLAY_WIDTH, settings.DISPLAY_LENGTH, settings.DISPLAY_SIZE))
 
         return frame

@@ -3,11 +3,6 @@
     Date: 2019 August 14
 """
 
-# @package AnnotationSocket
-
-# for importation from outside this directory
-from UdpConnection import UdpConnection
-
 from UDPConnectionSingleton import UDPConnectionSingleton
 
 """
@@ -20,12 +15,10 @@ from UDPConnectionSingleton import UDPConnectionSingleton
 """
 
 
-class AnnotationSocket(UdpConnection):
-
+class AnnotationSocket():
+    UDPConnectionSingleton = UDPConnectionSingleton.getUDPConnectionInstance()
     """
     Module defining a specific socket for sending annotation command
-
-    Inherited from UdpConnection.
     Specific socket for sending display command
     """
 
@@ -38,8 +31,8 @@ class AnnotationSocket(UdpConnection):
 
         """
 
-        if not self.IsConnected():
-            self.echo("Request not possible: client not connected")
+        if not self.UDPConnectionSingleton.IsConnected():
+            self.UDPConnectionSingleton.echo("Request not possible: client not connected")
             return
 
         cmd += ";"
@@ -49,6 +42,6 @@ class AnnotationSocket(UdpConnection):
             cmd += str(arg)+";"
 
         # send command and wait a message that indicate the command is applied
-        self.sendto(cmd.encode(), self.client)
-        self.WaitMsg(32, 1)
-        self.WaitMsg(32, 1)
+        self.UDPConnectionSingleton.sendto(cmd.encode(), self.UDPConnectionSingleton.client)
+        self.UDPConnectionSingleton.WaitMsg(32, 1)
+        self.UDPConnectionSingleton.WaitMsg(32, 1)

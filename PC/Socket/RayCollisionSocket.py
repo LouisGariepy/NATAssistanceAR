@@ -14,20 +14,18 @@ try:
 except:
     # for importation from here
     from UdpConnection import UdpConnection
-    
 
-import numpy as np
-from UDPConnectionSingleton import UDPConnectionSingleton
+import os
 # # Import
 # # Global variables
 import sys
-import os
+
+from UDPConnectionSingleton import UDPConnectionSingleton
+
 filedir = os.path.dirname(__file__) #path to this file
 pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
 sys.path.insert(1, pcdir)
 
-# for importation from here
-from UdpConnection import UdpConnection
 import GlobalVariables.Settings as settings
 import numpy as np
 
@@ -41,21 +39,12 @@ import numpy as np
 #                                                                  #
 ####################################################################
 """
-## Inherited from UdpConnection. Socket for receiving 3D coordinates coresponding to 2D coordinates sended previously
+
 class RayCollisionSocket():
     UDPConnectionSingleton = UDPConnectionSingleton.getUDPConnectionInstance()
-    
-    """####################################################################"""
     ## Request to the client the associated coordinates in space of the 2D coordinates.
     # @param coords a list of 2D coordinates type (x, y) with normalised values coresponding to the client camera view.
     # return a list of coordinates type (x, y, z) with values exprimed in meters or an empty list if no reply is received.
-
-class RayCollisionSocket(UdpConnection):
-    """
-    Inherited from UdpConnection. Socket for receiving 3D coordinates 
-    coresponding to 2D coordinates sended previously
-    """
-
     def AskPositions(self, coords):
         """[summary]
         
@@ -71,19 +60,19 @@ class RayCollisionSocket(UdpConnection):
         """
         
         # if not connected or  if coords list is empty
-        if not self.IsConnected() or len(coords) == 0:
-            self.echo("Request not possible: client not connected")
+        if not self.UDPConnectionSingleton.IsConnected() or len(coords) == 0:
+            self.UDPConnectionSingleton.echo("Request not possible: client not connected")
             return []
         
         # convert list to message
         message = self.ToBytes(coords) 
         
         # send the 2D coordinates
-        self.sendto(message, self.client)
-        self.echo("Send request for positions to client")
+        self.UDPConnectionSingleton.sendto(message, self.UDPConnectionSingleton.client)
+        self.UDPConnectionSingleton.echo("Send request for positions to client")
         
         # await coordinates
-        received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1) 
+        received, packet = self.UDPConnectionSingleton.WaitMsg(settings.SOCKET_BUFSIZE, 1)
         
         # convert packet (string) to list if received
         if received > 0:

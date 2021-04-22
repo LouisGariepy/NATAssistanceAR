@@ -3,11 +3,6 @@
     Date: 2019 August 14
 """
 
-## @package UdpConnection
-# Module defining a basic socket for connection
-
-# coding: utf-8
-
 import socket
 
 import GlobalVariables.Settings as settings
