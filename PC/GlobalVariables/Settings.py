@@ -9,7 +9,7 @@ LABELS = MODEL_DIRECTORY + "/labelmap.pbtxt"
 
 NUM_CLASSES = 7
 
-HOST = "192.168.1.11"
+HOST = "127.0.0.1"
 
 #Ports
 CAMERA_PORT = 9999
