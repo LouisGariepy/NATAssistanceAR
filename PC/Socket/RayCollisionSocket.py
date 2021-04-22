@@ -8,16 +8,6 @@
 
 # coding: utf-8
 
-try:
-    # for importation from outside this directory
-    from Socket.UdpConnection import UdpConnection
-except:
-    # for importation from here
-    from UdpConnection import UdpConnection
-    
-
-import numpy as np
-
 # # Import
 # # Global variables
 import sys
@@ -25,7 +15,11 @@ import os
 filedir = os.path.dirname(__file__) #path to this file
 pcdir = os.path.join(filedir, os.pardir) #path to NATAssistanceAR/PC
 sys.path.insert(1, pcdir)
+
+# for importation from here
+from UdpConnection import UdpConnection
 import GlobalVariables.Settings as settings
+import numpy as np
 
 """
 ####################################################################
@@ -37,65 +31,90 @@ import GlobalVariables.Settings as settings
 #                                                                  #
 ####################################################################
 """
-## Inherited from UdpConnection. Socket for receiving 3D coordinates coresponding to 2D coordinates sended previously
+
 class RayCollisionSocket(UdpConnection):
-    
-    
-    """####################################################################"""
-    ## Request to the client the associated coordinates in space of the 2D coordinates.
-    # @param coords a list of 2D coordinates type (x, y) with normalised values coresponding to the client camera view.
-    # return a list of coordinates type (x, y, z) with values exprimed in meters or an empty list if no reply is received.
+    """
+    Inherited from UdpConnection. Socket for receiving 3D coordinates 
+    coresponding to 2D coordinates sended previously
+    """
+
     def AskPositions(self, coords):
+        """[summary]
         
-        if not self.IsConnected():
+        Request to the client the associated coordinates in space of the 2D coordinates.
+        
+        Args:
+            coords ([list]): a list of 2D coordinates type (x, y) with 
+                            normalised values coresponding to the client camera view.
+            
+        Returns:
+            [list]: a list of coordinates type (x, y, z) with 
+                    values exprimed in meters or an empty list if no reply is received.
+        """
+        
+        # if not connected or  if coords list is empty
+        if not self.IsConnected() or len(coords) == 0:
             self.echo("Request not possible: client not connected")
-            
-        # if coords list is empty
-        elif len(coords) == 0:
             return []
+        
+        # convert list to message
+        message = self.ToBytes(coords) 
+        
+        # send the 2D coordinates
+        self.sendto(message, self.client)
+        self.echo("Send request for positions to client")
+        
+        # await coordinates
+        received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1) 
+        
+        # convert packet (string) to list if received
+        if received > 0:
+            return self.ToArray(packet)
+        
+        return []
             
-        else:
-            message = self.ToBytes(coords) # convert list to message
-            
-            # send the 2D coordinates
-            self.sendto(message, self.client)
-            self.echo("Send request for positions to client")
-            
-            received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1) # await coordinates
-            # convert packet (string) to list if received
-            if received > 0:
-                return self.ToArray(packet)
-            else:
-                return []
-            
-    
-    """####################################################################"""
-    ## Convert the 2D coordinates list to a string for being sendable
-    # @param coords list of 2D coordinates like [(x1,y1), (x2,y2), (x3,y3), ... ]
-    # return a string as byte array like x1,y1;x2,y2;x3,y3;... 
     def ToBytes(self, coords):
+        """[summary]
+        
+        Convert the 2D coordinates list to a string for being sendable
+        
+        Args:
+            coords ([list]): list of 2D coordinates like [(x1,y1), (x2,y2), (x3,y3), ... ]
+
+        Returns:
+            [bytes]: returns a string as byte array like x1,y1;x2,y2;x3,y3;... 
+        """        
         
         message = ""
         
         # for each coordinates, concat to the message x and y value
         for x, y in coords:
             message += "{},{};".format(x,y)
-            
-        return message[:-1].encode() #remove the last character (a useless ;) and convert to bytes
+        
+        #remove the last character (a useless ;) and convert to bytes
+        message = message[:-1].encode() 
+        
+        return message
     
-    
-    """####################################################################"""
-    ## Convert the received message to 3D coordinate list
-    # @param packet bytes received from client, format : x1,y1,z1;x2,y2,z2;x3,y3,z3;
-    # return an array like [ (x1,y1,z1), (x2,y2,z2), (x3,y3,z3), ... ] 
     def ToArray(self, packet):
+        """[summary]
+        Convert the received message to 3D coordinate list
         
-        packet = packet.decode()[:-1] # convert bytes to string and remove last character (a useless ;)
+        Args:
+            packet ([bytes]): bytes received from client, format : x1,y1,z1;x2,y2,z2;x3,y3,z3;
+
+        Returns:
+            [array]: an array like [ (x1,y1,z1), (x2,y2,z2), (x3,y3,z3), ... ] 
+        """
         
-        vectors = packet.split(";")
+        # convert bytes to string and remove last character (a useless ;)
+        packet = packet.decode()[:-1] 
+        packet = packet.split(";")
         
         # foreach vector as single string, split into 3 values (x, y, z)
-        for n, vec in enumerate(vectors):
-            vectors[n] = vec.split(",")
-            
-        return np.asarray(vectors).astype(float)
+        for n, vec in enumerate(packet):
+            packet[n] = vec.split(",")
+        
+        packet = np.asarray(packet).astype(float)
+          
+        return packet
