@@ -60,6 +60,9 @@ class CameraSocket():
         """
 
         size, header = self.UDPConnectionSingleton.WaitMsg(32, 1, "header")  # wait the header
+        
+        # wait the header
+        size, header = self.WaitMsg(32, 1, "header")  
 
         # if received
         if size > 0:
@@ -78,6 +81,12 @@ class CameraSocket():
 
         # loop as many as packet to receive
         for _ in range(self.header["packet"]):
+            
+            # send message for next packet
+            self.sendto(b"\xfe", self.client) 
+             
+            # wait the packet
+            received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1)  
 
             self.UDPConnectionSingleton.sendto(b"\xfe", self.UDPConnectionSingleton.client)  # send message for next packet
             received, packet = self.UDPConnectionSingleton.WaitMsg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
@@ -86,9 +95,10 @@ class CameraSocket():
             received, packet = self.UDPConnectionSingleton.WaitMsg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
 
             if not received:
-                return False, self.data  # in case of timeout or error
+                return False, self.data  
             
-            data += packet  # concat the packet to data
+            # concat the packet to data
+            data += packet  
 
         return True, data
 
@@ -117,8 +127,9 @@ class CameraSocket():
 
         # try to decode frame
         try:
+            # decode the frame
             frame = cv2.imdecode(np.frombuffer(
-                self.data, np.uint8), -1)  # decode the frame
+                self.data, np.uint8), -1)  
 
         except:
             self.ClearReception()

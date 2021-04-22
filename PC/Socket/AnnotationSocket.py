@@ -35,13 +35,12 @@ class AnnotationSocket():
             self.UDPConnectionSingleton.echo("Request not possible: client not connected")
             return
 
-        cmd += ";"
+        message = cmd + ";"
 
         # add each optional argument
         for arg in args:
-            cmd += str(arg)+";"
+            message += str(arg)+";"
 
         # send command and wait a message that indicate the command is applied
         self.UDPConnectionSingleton.sendto(cmd.encode(), self.UDPConnectionSingleton.client)
-        self.UDPConnectionSingleton.WaitMsg(32, 1)
         self.UDPConnectionSingleton.WaitMsg(32, 1)
