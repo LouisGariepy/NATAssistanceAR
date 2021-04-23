@@ -2,12 +2,18 @@
     Author: Anthony Melin
     Date: 2019 August 14
 """
-import cv2
-import numpy as np
-from pandas import np
+
+# # Global variables
+import sys
+import os
+filedir = os.path.dirname(__file__)  # path to this file
+pcdir = os.path.join(filedir, os.pardir)  # path to NATAssistanceAR/PC
+sys.path.insert(1, pcdir)
 
 import GlobalVariables.Settings as settings
-from UDPConnectionSingleton import UDPConnectionSingleton
+from UdpConnection import UdpConnection
+import numpy as np
+import cv2
 
 """
 ###############################################################
@@ -23,10 +29,9 @@ from UDPConnectionSingleton import UDPConnectionSingleton
 ###############################################################
 """
 
-
-class CameraSocket():
-    UDPConnectionSingleton = UDPConnectionSingleton.getUDPConnectionInstance()
+class CameraSocket(UdpConnection):
     """
+    Inherited from UdpConnection.
     Udp server for asking data in byte format to connected client.
     Receive frames as data and make sure it's readable
     """
@@ -43,12 +48,12 @@ class CameraSocket():
         data_readable indicate if received data are valid. If so, it's stored in data
         """
 
-        if not self.UDPConnectionSingleton.IsConnected():
-            self.UDPConnectionSingleton.echo("Request not possible: client not connected")
+        if not self.IsConnected():
+            self.echo("Request not possible: client not connected")
             return
 
-        self.UDPConnectionSingleton.echo("Send request for data to client")
-        self.UDPConnectionSingleton.sendto(b"\xff", self.UDPConnectionSingleton.client)
+        self.echo("Send request for data to client")
+        self.sendto(b"\xff", self.client)
 
         if self.header:
             self.data_readable, self.data = self.recvPackets()
@@ -59,15 +64,12 @@ class CameraSocket():
         Return the result of FormatHeader if received the header otherwise return false
         """
 
-        size, header = self.UDPConnectionSingleton.WaitMsg(32, 1, "header")  # wait the header
-        
-        # wait the header
-        size, header = self.WaitMsg(32, 1, "header")  
+        size, header = self.WaitMsg(32, 1, "header")  # wait the header
 
         # if received
         if size > 0:
-            self.UDPConnectionSingleton.echo("Received header")
-            return self.UDPConnectionSingleton.formatHeader(header)
+            self.echo("Received header")
+            return self.formatHeader(header)
 
         return False
 
@@ -81,24 +83,14 @@ class CameraSocket():
 
         # loop as many as packet to receive
         for _ in range(self.header["packet"]):
-            
-            # send message for next packet
-            self.sendto(b"\xfe", self.client) 
-             
-            # wait the packet
-            received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1)  
 
-            self.UDPConnectionSingleton.sendto(b"\xfe", self.UDPConnectionSingleton.client)  # send message for next packet
-            received, packet = self.UDPConnectionSingleton.WaitMsg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
-            self.UDPConnectionSingleton.sendto(b"\xfe",
-                                               self.UDPConnectionSingleton.client)  # send message for next packet
-            received, packet = self.UDPConnectionSingleton.WaitMsg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
+            self.sendto(b"\xfe", self.client)  # send message for next packet
+            received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
 
             if not received:
-                return False, self.data  
+                return False, self.data  # in case of timeout or error
             
-            # concat the packet to data
-            data += packet  
+            data += packet  # concat the packet to data
 
         return True, data
 
@@ -111,8 +103,6 @@ class CameraSocket():
         # packet is the 1st byte received. It's implicitly converted to int
         packet = header[0]
         self.echo("packet: {}".format(packet))
-        packet = header[0]  # packet is the 1st byte received. It's implicitly converted to int
-        self.UDPConnectionSingleton.echo("packet: {}".format(packet))
 
         return {"packet": packet}
 
@@ -127,9 +117,8 @@ class CameraSocket():
 
         # try to decode frame
         try:
-            # decode the frame
             frame = cv2.imdecode(np.frombuffer(
-                self.data, np.uint8), -1)  
+                self.data, np.uint8), -1)  # decode the frame
 
         except:
             self.ClearReception()
