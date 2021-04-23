@@ -4,9 +4,16 @@
 """
 
 import socket
+# # Global variables
+import sys
+import os
+filedir = os.path.dirname(__file__)  # path to this file
+pcdir = os.path.join(filedir, os.pardir)  # path to NATAssistanceAR/PC
+sys.path.insert(1, pcdir)
 
 import GlobalVariables.Settings as settings
 from Utils import ipv4_decode
+from UDPConnectionSingleton import Singleton
 
 """
 ###############################################################
@@ -24,12 +31,12 @@ from Utils import ipv4_decode
 #                                                             #
 ###############################################################
 """
-
+    
 
 ## Base Udp socket with methods for client connection.
 # The remote connection is called "client"
 # Informations could be displayed in console, use EchoEnabled.
-class UdpConnection(socket.socket):
+class UdpConnection(socket.socket, metaclass=Singleton):
     
     host = settings.HOST
     port = settings.CAMERA_PORT

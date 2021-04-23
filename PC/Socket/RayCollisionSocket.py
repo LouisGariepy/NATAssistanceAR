@@ -32,11 +32,12 @@ import numpy as np
 ####################################################################
 """
 
-class RayCollisionSocket(UdpConnection):
+class RayCollisionSocket():
     """
     Inherited from UdpConnection. Socket for receiving 3D coordinates 
     coresponding to 2D coordinates sended previously
     """
+    udp = UdpConnection()
 
     def AskPositions(self, coords):
         """[summary]
@@ -53,19 +54,19 @@ class RayCollisionSocket(UdpConnection):
         """
         
         # if not connected or  if coords list is empty
-        if not self.IsConnected() or len(coords) == 0:
-            self.echo("Request not possible: client not connected")
+        if not self.udp.IsConnected() or len(coords) == 0:
+            self.udp.echo("Request not possible: client not connected")
             return []
         
         # convert list to message
         message = self.ToBytes(coords) 
         
         # send the 2D coordinates
-        self.sendto(message, self.client)
-        self.echo("Send request for positions to client")
+        self.udp.sendto(message, self.udp.client)
+        self.udp.echo("Send request for positions to client")
         
         # await coordinates
-        received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1) 
+        received, packet = self.udp.WaitMsg(settings.SOCKET_BUFSIZE, 1) 
         
         # convert packet (string) to list if received
         if received > 0:

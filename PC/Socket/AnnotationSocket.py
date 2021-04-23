@@ -6,6 +6,7 @@
 # @package AnnotationSocket
 
 # for importation from outside this directory
+
 from UdpConnection import UdpConnection
 
 """
@@ -18,15 +19,15 @@ from UdpConnection import UdpConnection
 """
 
 
-class AnnotationSocket(UdpConnection):
-
+class AnnotationSocket():
     """
     Module defining a specific socket for sending annotation command
 
     Inherited from UdpConnection.
     Specific socket for sending display command
     """
-
+    udp = UdpConnection()
+    
     def Draw(self, cmd, *args):
         """[summary]
         Send the command and a vector to client
@@ -36,8 +37,8 @@ class AnnotationSocket(UdpConnection):
 
         """
 
-        if not self.IsConnected():
-            self.echo("Request not possible: client not connected")
+        if not self.udp.IsConnected():
+            self.udp.echo("Request not possible: client not connected")
             return
 
         cmd += ";"
@@ -47,5 +48,5 @@ class AnnotationSocket(UdpConnection):
             cmd += str(arg)+";"
 
         # send command and wait a message that indicate the command is applied
-        self.sendto(cmd.encode(), self.client)
-        self.WaitMsg(32, 1)
+        self.udp.sendto(cmd.encode(), self.udp.client)
+        self.udp.WaitMsg(32, 1)

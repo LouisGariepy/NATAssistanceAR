@@ -1,18 +1,9 @@
-import UdpConnection
+class Singleton(type):
+    def __init__(cls, name, bases, attrs, **kwargs):
+        super().__init__(name, bases, attrs)
+        cls._instance = None
 
-
-class UDPConnectionSingleton:
-    __instance = None
-
-    @staticmethod
-    def getUDPConnectionInstance():
-        if UDPConnectionSingleton.__instance is None:
-            UDPConnectionSingleton()
-        return UDPConnectionSingleton.__instance
-
-    def __init__(self):
-        """ Virtually private constructor. """
-        if UDPConnectionSingleton.__instance is not None:
-            raise Exception("This class is a singleton!")
-        else:
-            UDPConnectionSingleton.__instance = UdpConnection
+    def __call__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super().__call__(*args, **kwargs)
+        return cls._instance

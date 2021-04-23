@@ -29,12 +29,13 @@ import cv2
 ###############################################################
 """
 
-class CameraSocket(UdpConnection):
+class CameraSocket():
     """
     Inherited from UdpConnection.
     Udp server for asking data in byte format to connected client.
     Receive frames as data and make sure it's readable
     """
+    udp = UdpConnection()
 
     def __init__(self):
         super().__init__()
@@ -48,12 +49,12 @@ class CameraSocket(UdpConnection):
         data_readable indicate if received data are valid. If so, it's stored in data
         """
 
-        if not self.IsConnected():
-            self.echo("Request not possible: client not connected")
+        if not self.udp.IsConnected():
+            self.udp.echo("Request not possible: client not connected")
             return
 
-        self.echo("Send request for data to client")
-        self.sendto(b"\xff", self.client)
+        self.udp.echo("Send request for data to client")
+        self.udp.sendto(b"\xff", self.udp.client)
 
         if self.header:
             self.data_readable, self.data = self.recvPackets()
@@ -64,11 +65,11 @@ class CameraSocket(UdpConnection):
         Return the result of FormatHeader if received the header otherwise return false
         """
 
-        size, header = self.WaitMsg(32, 1, "header")  # wait the header
+        size, header = self.udp.WaitMsg(32, 1, "header")  # wait the header
 
         # if received
         if size > 0:
-            self.echo("Received header")
+            self.udp.echo("Received header")
             return self.formatHeader(header)
 
         return False
@@ -84,8 +85,8 @@ class CameraSocket(UdpConnection):
         # loop as many as packet to receive
         for _ in range(self.header["packet"]):
 
-            self.sendto(b"\xfe", self.client)  # send message for next packet
-            received, packet = self.WaitMsg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
+            self.udp.sendto(b"\xfe", self.udp.client)  # send message for next packet
+            received, packet = self.udp.WaitMsg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
 
             if not received:
                 return False, self.data  # in case of timeout or error
@@ -102,7 +103,7 @@ class CameraSocket(UdpConnection):
 
         # packet is the 1st byte received. It's implicitly converted to int
         packet = header[0]
-        self.echo("packet: {}".format(packet))
+        self.udp.echo("packet: {}".format(packet))
 
         return {"packet": packet}
 
@@ -121,7 +122,7 @@ class CameraSocket(UdpConnection):
                 self.data, np.uint8), -1)  # decode the frame
 
         except:
-            self.ClearReception()
+            self.udp.ClearReception()
             frame = np.zeros((settings.DISPLAY_WIDTH
                             , settings.DISPLAY_LENGTH
                             , settings.DISPLAY_SIZE))
