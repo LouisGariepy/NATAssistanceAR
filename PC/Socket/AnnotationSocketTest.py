@@ -36,7 +36,7 @@ _port = settings.CAMERA_PORT
 # In[ ]:
 
 
-socket = UDPConnectionSingleton.getUDPConnectionInstance().Bind(_host, _port)
+socket = AnnotationSocket().Bind(_host, _port)
 connected = socket.WaitConnection()
 
 
