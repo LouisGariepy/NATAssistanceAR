@@ -51,9 +51,16 @@ class UdpConnection(socket.socket, metaclass=Singleton):
         self.echo("Socket created")
 
     def bind(self, host, port):
-        """
-        Bind the socket to an adress and a port.
-        return itself for allowing shorter syntax used in some example scripts
+        """[summary]
+
+        Bind the socket to an adress
+
+        Args:
+            host (str): host string, the IP adress to bind
+            port (int): port int, the port to bind
+
+        Returns:
+            [self]: return itself for allowing shorter syntax used in some example scripts
         """
 
         assert type(host) == str, "host argument type must be str"
@@ -67,24 +74,34 @@ class UdpConnection(socket.socket, metaclass=Singleton):
         return self
 
     def clear_reception(self):
-        """
-        This method is a way to clear the reception buffer. It avoid to read an obsolet message.
+        """[summary]
+
+        This method is a way to clear the reception buffer. It avoid to read an obsolet message
         """
 
         try:
             self.settimeout(0.01)
             self.recv(settings.SOCKET_BUFSIZE)
-            
+
         except socket.timeout:
             pass
 
         else:
             self.clear_reception()
 
+
     def wait_msg(self, size, timeout=0, type_message=""):
-        """
-        Wait for a specifed time a message from the client.
-        Return a tuple like (message length, message), (0,0) when message is not received
+        """[summary]
+
+        Wait for a specifed time a message from the client
+
+        Args:
+            size (int), the buffer size for receive the message, should be greater than message otherwise Datagram error is raised
+            timeout (float), time to wait in second. If none is specified, wait until message is received
+            type_message (string), appear in console information when specified
+
+        Returns:
+            [(int,str))]: Return a tuple like (message length, message), (0,0) when message is not received
         """
 
         assert type(timeout) == int, "timeout argument type must be int"
@@ -105,8 +122,15 @@ class UdpConnection(socket.socket, metaclass=Singleton):
             return 0, 0
 
     def wait_connection(self, timeout=10):
-        """
-        Wait a client connection. Return true if connection is made.
+        """[summary]
+
+        Wait a client connection. Return true if connection is made
+
+        Args:
+            timeout (float) : time to wait in second, default : 10sec
+
+        Returns:
+            [bool]: return true if the connection was etablished or false if not
         """
 
         assert type(timeout) == int, "timeout argument type must be int"
@@ -140,8 +164,10 @@ class UdpConnection(socket.socket, metaclass=Singleton):
             return True
 
     def is_connected(self):
-        """
-        Indicate if a client is connected.
+        """[summary]
+
+        Indicate if a client is connected
+
         """
 
         if self.client:
@@ -150,22 +176,28 @@ class UdpConnection(socket.socket, metaclass=Singleton):
             return False
 
     def enable_echo(self):
-        """
-        Allow the socket to display informations in the console.
+        """[summary]
+
+        Allow the socket to display informations in the console
+
         """
 
         self.echo = lambda x: print(x)
 
     def disable_echo(self):
-        """
-        Disable console informations.
+        """[summary]
+
+        Disable console informations
+
         """
 
         self.echo = lambda x: None
 
     def exit(self):
-        """
-        Send a byte that indicate an end of connection and delete client adress.
+        """[summary]
+
+        Send a byte that indicate an end of connection and delete client adress
+
         """
 
         if self.is_connected():
