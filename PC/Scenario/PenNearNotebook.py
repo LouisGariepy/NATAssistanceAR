@@ -25,12 +25,12 @@ class PenNearNotebook(BaseScenario):
         for obj in self.first_detection:
             pos = self.obj[obj]
             print("                             ", obj, pos)
-            self.socket.Draw("new_text", pos.x, pos.y, pos.z, obj)
+            self.socket.draw("new_text", pos.x, pos.y, pos.z, obj)
             
         for obj in self.obj:
             pos = self.obj[obj] * 0.8
             print(obj, pos)
-            self.socket.Draw("update_text", pos.x, pos.y, pos.z, obj, "white")
+            self.socket.draw("update_text", pos.x, pos.y, pos.z, obj, "white")
         
 #         if ("Pen" in self.obj and "Notebook" in self.obj):
             

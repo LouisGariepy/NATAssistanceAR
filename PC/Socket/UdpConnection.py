@@ -7,6 +7,7 @@ import socket
 # # Global variables
 import sys
 import os
+
 filedir = os.path.dirname(__file__)  # path to this file
 pcdir = os.path.join(filedir, os.pardir)  # path to NATAssistanceAR/PC
 sys.path.insert(1, pcdir)
@@ -31,36 +32,32 @@ from UDPConnectionSingleton import Singleton
 #                                                             #
 ###############################################################
 """
-    
 
-## Base Udp socket with methods for client connection.
-# The remote connection is called "client"
-# Informations could be displayed in console, use EchoEnabled.
+
 class UdpConnection(socket.socket, metaclass=Singleton):
-    
+    """
+    Base Udp socket with methods for client connection.
+    The remote connection is called "client"
+    Informations could be displayed in console, use EchoEnabled.
+    """
     host = settings.HOST
     port = settings.CAMERA_PORT
     client = None
     echo = lambda x, y: None
 
-    """###########################################################"""
-
-    ## Constructor that build the socket object
     def __init__(self):
 
         socket.socket.__init__(self, socket.AF_INET, socket.SOCK_DGRAM)
         self.echo("Socket created")
 
-    """###########################################################"""
+    def bind(self, host, port):
+        """
+        Bind the socket to an adress and a port.
+        return itself for allowing shorter syntax used in some example scripts
+        """
 
-    ## Bind the socket to an adress
-    # @param host string, the IP adress to bind
-    # @param port int, the port to bind
-    # return itself for allowing shorter syntax used in some example scripts
-    def Bind(self, host, port):
-
-        if type(host) != str: "host argument type must be str"
-        if type(port) != int: "port argument type must be int"
+        assert type(host) == str, "host argument type must be str"
+        assert type(port) == int, "port argument type must be int"
 
         self.host = host
         self.port = port
@@ -69,32 +66,29 @@ class UdpConnection(socket.socket, metaclass=Singleton):
         self.echo("Socket bind to {}:{}".format(host, port))
         return self
 
-    """###########################################################"""
-
-    ## This method is a way to clear the reception buffer. It avoid to read an obsolet message
-    def ClearReception(self):
+    def clear_reception(self):
+        """
+        This method is a way to clear the reception buffer. It avoid to read an obsolet message.
+        """
 
         try:
             self.settimeout(0.01)
             self.recv(settings.SOCKET_BUFSIZE)
-
+            
         except socket.timeout:
             pass
 
         else:
-            self.ClearReception()
+            self.clear_reception()
 
-    """###########################################################"""
+    def wait_msg(self, size, timeout=0, type_message=""):
+        """
+        Wait for a specifed time a message from the client.
+        Return a tuple like (message length, message), (0,0) when message is not received
+        """
 
-    ## Wait for a specifed time a message from the client
-    # Return a tuple like (message length, message), (0,0) when message is not received
-    # @param size int, the buffer size for receive the message, should be greater than message otherwise Datagram error is raised
-    # @param timeout float, time to wait in second. If none is specified, wait until message is received
-    # @param type_message string, appear in console information when specified
-    def WaitMsg(self, size, timeout=0, type_message=""):
-
-        if type(timeout) != int:  "timeout argument type must be int"
-        if type(type_message) != str: "type_message argument type must be str"
+        assert type(timeout) == int, "timeout argument type must be int"
+        assert type(type_message) == str, "type_message argument type must be str"
 
         if timeout: self.settimeout(timeout)
         self.echo("Awaiting message ({})...".format(type_message))
@@ -110,13 +104,12 @@ class UdpConnection(socket.socket, metaclass=Singleton):
             self.echo("Datagram error")
             return 0, 0
 
-    """###########################################################"""
+    def wait_connection(self, timeout=10):
+        """
+        Wait a client connection. Return true if connection is made.
+        """
 
-    ## Wait a client connection. Return true if connection is made
-    # @param timeout float, time to wait in second, default : 10sec
-    def WaitConnection(self, timeout=10):
-
-        if type(timeout) != int:  "timeout argument type must be int"
+        assert type(timeout) == int, "timeout argument type must be int"
 
         # await a connect sequence from client
         self.echo("Awaiting connection...")
@@ -129,7 +122,7 @@ class UdpConnection(socket.socket, metaclass=Singleton):
             return False
 
         except OSError:
-            self.ClearReception()
+            self.clear_reception()
             self.echo("Datagram error")
             return False
 
@@ -141,41 +134,40 @@ class UdpConnection(socket.socket, metaclass=Singleton):
 
             # send a byte for connection confirmation
             self.sendto(b"\xff", self.client)
-            self.ClearReception()
+            self.clear_reception()
 
             self.echo("Connection from {}".format(self.client))
             return True
 
-    """###########################################################"""
-
-    ## Indicate if a client is connected
-    # Return a boolean, true : client connected
-    def IsConnected(self):
+    def is_connected(self):
+        """
+        Indicate if a client is connected.
+        """
 
         if self.client:
             return True
         else:
             return False
 
-    """###########################################################"""
-
-    ## Allow the socket to display informations in the console
-    def EnableEcho(self):
+    def enable_echo(self):
+        """
+        Allow the socket to display informations in the console.
+        """
 
         self.echo = lambda x: print(x)
 
-    """###########################################################"""
-
-    ## Disable console informations
-    def DisableEcho(self):
+    def disable_echo(self):
+        """
+        Disable console informations.
+        """
 
         self.echo = lambda x: None
 
-    """###########################################################"""
+    def exit(self):
+        """
+        Send a byte that indicate an end of connection and delete client adress.
+        """
 
-    ## Send a byte that indicate an end of connection and delete client adress
-    def Exit(self):
-
-        if self.IsConnected():
+        if self.is_connected():
             self.sendto(b"\x01", self.client)
             self.client = False

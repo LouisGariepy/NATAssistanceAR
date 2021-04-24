@@ -79,7 +79,7 @@ video = RemoteCam(settings.REMOTECAM_PORT, settings.REMOTECAM_NBSOCKETS)
 
 while(True):
 
-    frame = video.getFrame()
+    frame = video.get_frame()
     
     if frame.shape == (settings.DISPLAY_WIDTH, settings.DISPLAY_LENGTH, settings.DISPLAY_SIZE):
         detected = detector.Detect(frame)

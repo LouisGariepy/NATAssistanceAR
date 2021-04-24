@@ -36,7 +36,7 @@ class PenNearNotebookOnto2D(BaseScenario):
 
         # display object at first detection
         for obj in self.first_detection:
-            self.socket.Draw("new", pos.x, pos.y, pos.z, obj)
+            self.socket.draw("new", pos.x, pos.y, pos.z, obj)
 
         
         # iterates on detected objects 
@@ -56,11 +56,11 @@ class PenNearNotebookOnto2D(BaseScenario):
                         if self.Length(obj, nextObj.name) < 0.2:
 
                             cv2.putText(self.frame,'Interaction', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 2)
-                            self.socket.Draw("update_text", pos.x, pos.y, pos.z, "Pen", "white")
-                            self.socket.Draw("update_text", pos.x, pos.y, pos.z, "Notebook", "white")
+                            self.socket.draw("update_text", pos.x, pos.y, pos.z, "Pen", "white")
+                            self.socket.draw("update_text", pos.x, pos.y, pos.z, "Notebook", "white")
 
                         else:
 
                             cv2.putText(self.frame,'No interaction', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
-                            self.socket.Draw("update_text", pos.x, pos.y, pos.z, "Pen", "alpha")
-                            self.socket.Draw("update_text", pos.x, pos.y, pos.z, "Notebook", "alpha")
+                            self.socket.draw("update_text", pos.x, pos.y, pos.z, "Pen", "alpha")
+                            self.socket.draw("update_text", pos.x, pos.y, pos.z, "Notebook", "alpha")

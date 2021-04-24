@@ -39,7 +39,7 @@ class RayCollisionSocket():
     """
     udp = UdpConnection()
 
-    def AskPositions(self, coords):
+    def ask_positions(self, coords):
         """[summary]
         
         Request to the client the associated coordinates in space of the 2D coordinates.
@@ -54,7 +54,7 @@ class RayCollisionSocket():
         """
         
         # if not connected or  if coords list is empty
-        if not self.udp.IsConnected() or len(coords) == 0:
+        if not self.udp.is_connected() or len(coords) == 0:
             self.udp.echo("Request not possible: client not connected")
             return []
         
@@ -66,7 +66,7 @@ class RayCollisionSocket():
         self.udp.echo("Send request for positions to client")
         
         # await coordinates
-        received, packet = self.udp.WaitMsg(settings.SOCKET_BUFSIZE, 1) 
+        received, packet = self.udp.wait_msg(settings.SOCKET_BUFSIZE, 1)
         
         # convert packet (string) to list if received
         if received > 0:

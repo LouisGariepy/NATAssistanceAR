@@ -47,7 +47,7 @@ class SimpleNATDebug(BaseScenario):
         
         for obj in self.first_detection:
             pos = self.obj[obj]
-            self.socket.Draw("new_text", pos.x, pos.y, pos.z, obj)
+            self.socket.draw("new_text", pos.x, pos.y, pos.z, obj)
         
     
     ################################################################
@@ -58,12 +58,12 @@ class SimpleNATDebug(BaseScenario):
             if obj == "Left" and not self.left_area_set:
                 self.left_area_set = True
                 self.excluded_detection.append("Left")
-                self.socket.Draw("new_area", pos[0], pos[1], pos[2], "left", self.area_range, "gray")
+                self.socket.draw("new_area", pos[0], pos[1], pos[2], "left", self.area_range, "gray")
             
             elif obj == "Right" and not self.right_area_set:
                 self.right_area_set = True
                 self.excluded_detection.append("Right")
-                self.socket.Draw("new_area", pos[0], pos[1], pos[2], "right", self.area_range, "gray")
+                self.socket.draw("new_area", pos[0], pos[1], pos[2], "right", self.area_range, "gray")
                 
     
     ################################################################
@@ -93,45 +93,45 @@ class SimpleNATDebug(BaseScenario):
     def LeftAreaObject(self, obj, pos):
         
         if self.Length(obj, "Left") < self.area_range:
-            self.socket.Draw("update_text", pos.x, pos.y, pos.z, obj, "green")
+            self.socket.draw("update_text", pos.x, pos.y, pos.z, obj, "green")
         
         elif self.Length(obj, "Right") < self.area_range:
-            self.socket.Draw("update_text", pos.x, pos.y, pos.z, obj, "red")
+            self.socket.draw("update_text", pos.x, pos.y, pos.z, obj, "red")
             
         else:
-            self.socket.Draw("update_text", pos.x, pos.y, pos.z, obj, "white")
+            self.socket.draw("update_text", pos.x, pos.y, pos.z, obj, "white")
     
     
     ################################################################
     def RightAreaObject(self, obj, pos):
         
         if self.Length(obj, "Right") < self.area_range:
-            self.socket.Draw("update_text", pos.x, pos.y, pos.z, obj, "green")
+            self.socket.draw("update_text", pos.x, pos.y, pos.z, obj, "green")
         
         elif self.Length(obj, "Left") < self.area_range:
-            self.socket.Draw("update_text", pos.x, pos.y, pos.z, obj, "red")
+            self.socket.draw("update_text", pos.x, pos.y, pos.z, obj, "red")
             
         else:
-            self.socket.Draw("update_text", pos.x, pos.y, pos.z, obj, "white")
+            self.socket.draw("update_text", pos.x, pos.y, pos.z, obj, "white")
             
     
     ################################################################
     def DistractorObject(self, obj, pos):
         
         if self.Length(obj, "Right") < self.area_range:
-            self.socket.Draw("update_text", pos.x, pos.y, pos.z, obj, "red")
+            self.socket.draw("update_text", pos.x, pos.y, pos.z, obj, "red")
         
         elif self.Length(obj, "Left") < self.area_range:
-            self.socket.Draw("update_text", pos.x, pos.y, pos.z, obj, "red")
+            self.socket.draw("update_text", pos.x, pos.y, pos.z, obj, "red")
             
         else:
-            self.socket.Draw("update_text", pos.x, pos.y, pos.z, obj, "white")
+            self.socket.draw("update_text", pos.x, pos.y, pos.z, obj, "white")
             
             
     ################################################################
     def OtherObjects(self, obj, pos):
         
-        self.socket.Draw("update_text", pos.x, pos.y, pos.z, obj, "alpha")
+        self.socket.draw("update_text", pos.x, pos.y, pos.z, obj, "alpha")
             
     
     
@@ -169,18 +169,18 @@ class SimpleNATRelease(SimpleNATDebug):
         # left area
         if self.left_error and self.left_color == "gray":
             self.left_color = "red"
-            self.socket.Draw("update_area", "left", "red")
+            self.socket.draw("update_area", "left", "red")
         elif not self.left_error and self.left_color == "red":
             self.left_color = "gray"
-            self.socket.Draw("update_area", "left", "gray")
+            self.socket.draw("update_area", "left", "gray")
             
         # right area
         if self.right_error and self.right_color == "gray":
             self.right_color = "red"
-            self.socket.Draw("update_area", "right", "red")
+            self.socket.draw("update_area", "right", "red")
         elif not self.right_error and self.right_color == "red":
             self.right_color = "gray"
-            self.socket.Draw("update_area", "right", "gray")
+            self.socket.draw("update_area", "right", "gray")
             
     
     ################################################################

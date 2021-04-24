@@ -61,7 +61,7 @@ detector.draw = True
 
 
 cameraSocket = CameraSocket().Bind(settings.HOST, settings.CAMERA_PORT)
-connected = cameraSocket.WaitConnection()    
+connected = cameraSocket.wait_connection()
 
 print(settings.HOST + " " + str(settings.CAMERA_PORT))
       
@@ -79,7 +79,7 @@ else:
 
 collisionSocket = RayCollisionSocket().Bind(settings.HOST, settings.COLLISION_PORT)
 print(settings.HOST + " " + str(settings.COLLISION_PORT))
-connected = collisionSocket.WaitConnection()
+connected = collisionSocket.wait_connection()
 if not connected:
     cameraSocket.close()
     collisionSocket.close()
@@ -94,7 +94,7 @@ else:
 
 annotationSocket = AnnotationSocket().Bind(settings.HOST, settings.ANNOTATION_PORT)
 print(settings.HOST + " " + str(settings.ANNOTATION_PORT))
-connected = annotationSocket.WaitConnection()
+connected = annotationSocket.wait_connection()
 if not connected:
     cameraSocket.close()
     collisionSocket.close()
@@ -115,7 +115,7 @@ while True:
     detected = detector.Detect(frame)
 
     # ray collision test
-    positions = collisionSocket.AskPositions(detected["centers"])
+    positions = collisionSocket.ask_positions(detected["centers"])
     
     # annotation
     if len(positions) > 0 and len(positions) == len(detected["centers"]):
@@ -127,9 +127,9 @@ while True:
     if cv2.waitKey(1) == ord(settings.EXIT_KEY): break
 
 
-cameraSocket.Exit()
-collisionSocket.Exit()
-annotationSocket.Exit()
+cameraSocket.exit()
+collisionSocket.exit()
+annotationSocket.exit()
 
 cameraSocket.close()
 collisionSocket.close()

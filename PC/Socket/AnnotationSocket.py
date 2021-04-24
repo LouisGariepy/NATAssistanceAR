@@ -28,7 +28,7 @@ class AnnotationSocket():
     """
     udp = UdpConnection()
     
-    def Draw(self, cmd, *args):
+    def draw(self, cmd, *args):
         """[summary]
         Send the command and a vector to client
         Args:
@@ -37,7 +37,7 @@ class AnnotationSocket():
 
         """
 
-        if not self.udp.IsConnected():
+        if not self.udp.is_connected():
             self.udp.echo("Request not possible: client not connected")
             return
 
@@ -49,4 +49,4 @@ class AnnotationSocket():
 
         # send command and wait a message that indicate the command is applied
         self.udp.sendto(cmd.encode(), self.udp.client)
-        self.udp.WaitMsg(32, 1)
+        self.udp.wait_msg(32, 1)

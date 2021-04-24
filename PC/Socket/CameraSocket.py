@@ -31,7 +31,6 @@ import cv2
 
 class CameraSocket():
     """
-    Inherited from UdpConnection.
     Udp server for asking data in byte format to connected client.
     Receive frames as data and make sure it's readable
     """
@@ -41,15 +40,15 @@ class CameraSocket():
         super().__init__()
         self.data = b""
         self.data_readable = False
-        self.header = self.recvHeader()
+        self.header = self.recv_header()
 
-    def askData(self):
+    def ask_data(self):
         """
         Request data to the client.
         data_readable indicate if received data are valid. If so, it's stored in data
         """
 
-        if not self.udp.IsConnected():
+        if not self.udp.is_connected():
             self.udp.echo("Request not possible: client not connected")
             return
 
@@ -57,24 +56,24 @@ class CameraSocket():
         self.udp.sendto(b"\xff", self.udp.client)
 
         if self.header:
-            self.data_readable, self.data = self.recvPackets()
+            self.data_readable, self.data = self.recv_packets()
 
-    def recvHeader(self):
+    def recv_header(self):
         """
         Wait for a reader that indicate information such as number of packet that the client will send
         Return the result of FormatHeader if received the header otherwise return false
         """
 
-        size, header = self.udp.WaitMsg(32, 1, "header")  # wait the header
+        size, header = self.udp.wait_msg(32, 1, "header")  # wait the header
 
         # if received
         if size > 0:
             self.udp.echo("Received header")
-            return self.formatHeader(header)
+            return self.format_header(header)
 
         return False
 
-    def recvPackets(self):
+    def recv_packets(self):
         """
         Method that receive all packets from client en gather it to restore data
         return a tuple like (data valid as boolean, data as byte array)
@@ -86,7 +85,7 @@ class CameraSocket():
         for _ in range(self.header["packet"]):
 
             self.udp.sendto(b"\xfe", self.udp.client)  # send message for next packet
-            received, packet = self.udp.WaitMsg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
+            received, packet = self.udp.wait_msg(settings.SOCKET_BUFSIZE, 1)  # wait the packet
 
             if not received:
                 return False, self.data  # in case of timeout or error
@@ -95,7 +94,7 @@ class CameraSocket():
 
         return True, data
 
-    def formatHeader(self, header):
+    def format_header(self, header):
         """
         Method for specify how to read the header. Return a dictionnary containing informations 
         Extract the number of packet to receive from the header.
@@ -107,14 +106,14 @@ class CameraSocket():
 
         return {"packet": packet}
 
-    def getFrame(self):
+    def get_frame(self):
         """
         Ask and return a frame. It works only with jpeg as decoder is integrated inside.
         Frame is returned as numpy array. All values are set to 0 if image is not valid. 
         """
 
         frame = None
-        self.askData()
+        self.ask_data()
 
         # try to decode frame
         try:
@@ -122,7 +121,7 @@ class CameraSocket():
                 self.data, np.uint8), -1)  # decode the frame
 
         except:
-            self.udp.ClearReception()
+            self.udp.clear_reception()
             frame = np.zeros((settings.DISPLAY_WIDTH
                             , settings.DISPLAY_LENGTH
                             , settings.DISPLAY_SIZE))
