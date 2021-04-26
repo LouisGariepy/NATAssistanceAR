@@ -14,7 +14,7 @@ NUM_CLASSES = 7
 
 # Override this if connected
 # to multiple networks
-HOST = HostIPv4.address
+HOST = HostIPv4.getAddress()
 
 #Ports
 CAMERA_PORT = 9999
