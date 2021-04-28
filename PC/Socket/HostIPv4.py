@@ -17,7 +17,11 @@ class HostIPv4(metaclass=Singleton):
         s.connect(("8.8.8.8", 80))
         address = s.getsockname()[0]
 
+    @staticmethod
+    def getAddress():
+        return HostIPv4.address
+
 
 # Obtenir l'addr IPv4
 if __name__ == '__main__':
-    print(HostIPv4().address)
+    print(HostIPv4.getAddress())
